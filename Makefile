@@ -12,7 +12,7 @@
 
 NAME = ircserv
 
-HEADER =	srcs/server.hpp
+HEADER =	server.hpp
 
 SRCS =	main.cpp\
 		server.cpp

@@ -10,14 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <string>
+#include "server.hpp"
 
 int main(int ac, char *av[]){
-
 	(void)av;
 	if (ac != 3){
 		std::cerr << "Wrong num of args" << std::endl;
 		return 0;
 	}
+    Server server;
+    return 0;
 }
