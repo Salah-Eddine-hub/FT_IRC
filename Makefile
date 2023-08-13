@@ -6,7 +6,7 @@
 #    By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/07/03 04:01:22 by sharrach         ###   ########.fr        #
+#    Updated: 2023/08/13 14:53:14 by sharrach         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,8 +18,8 @@ SRCS =	main.cpp\
 		server.cpp
 
 CC =	c++
-
-CPPFLAGS =	-Wall -Wextra -Werror -std=c++98
+# -std=c++98
+CPPFLAGS =	-Wall -Wextra -Werror 
 
 OBJS =	$(SRCS:.cpp=.o)
 

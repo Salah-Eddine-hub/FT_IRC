@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/07/03 14:09:42 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/08/13 14:52:29 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,10 @@
 
 class Server{
 public:
-	Server();
+	Server(int serverport, std::string pass);
 	~Server();
 private:
     int serverport;
+	std::string pass;
 };
 #endif
