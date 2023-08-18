@@ -1,4 +1,3 @@
-#include "server.hpp"
 
 // int Server::check_authenticate(int sockfd, std::string buffer)
 // {
@@ -6,9 +5,9 @@
 //     std::istringstream iss(buffer);
 //     std::string holder;
 
-//     std::map<int, std::string>::iterator it = this->usernameMap.find(sockfd);
+//     std::map<int, std::string>::iterator it = this->usernickMap.find(sockfd);
 //     std::cout << "sockfd: " << sockfd << std::endl;
-//     if (it == usernameMap.end()) {
+//     if (it == usernickMap.end()) {
 //         // while (getline(iss, holder, ' ')) {
 //         //     tokens.push_back(holder);
 //         // }
@@ -54,8 +53,8 @@
 //                 this->hostname = tokens[2];
 //                 this->servername = tokens[3];
 //                 this->realname = tokens[4];
-//                 usernameMap[sockfd] = realname;
-//                 std::cout << "usernameMap[sockfd]: " << usernameMap[sockfd] <<std::endl;
+//                 usernickMap[sockfd] = realname;
+//                 std::cout << "usernickMap[sockfd]: " << usernickMap[sockfd] <<std::endl;
 //                 std::cout <<  "USER hh :" << this->username << this->hostname << this->servername << this->realname << std::endl;
 //             }        
 //         }
@@ -70,14 +69,14 @@
 
 // int Server::check_authenticate(int sockfd, std::string buffer)
 // {
-//     std::map<int, std::string> usernameMap;
+//     std::map<int, std::string> usernickMap;
 //     std::vector<std::string> tokens;
 //     std::istringstream iss(buffer);
 //     std::string holder;
 
-//     std::map<int, std::string>::iterator it = usernameMap.find(sockfd);
+//     std::map<int, std::string>::iterator it = usernickMap.find(sockfd);
 //     std::cout << "sockfd: " << sockfd << std::endl;
-//     if (it == usernameMap.end()) {
+//     if (it == usernickMap.end()) {
 //         std::cout << "Existing sockfd " << sockfd << " associated with username: " << it->second << std::endl;
 //         return 1; // Return or perform desired action
 //     }
@@ -105,8 +104,8 @@
 //             this->hostname = tokens[2];
 //             this->servername = tokens[3];
 //             this->realname = tokens[4];
-//             usernameMap[sockfd] = realname;
-//             std::cout << "usernameMap[sockfd]: " << usernameMap[sockfd] <<std::endl;
+//             usernickMap[sockfd] = realname;
+//             std::cout << "usernickMap[sockfd]: " << usernickMap[sockfd] <<std::endl;
 //             std::cout << sockfd <<  "USER hh :" << this->username << this->hostname << this->servername << this->realname << std::endl;
 //         }
 //     }
@@ -138,6 +137,7 @@
 //     std::cout << "return " << std::endl;
 //     return 1;
 // }
+#include "server.hpp"
 
 Server::Server(int serverport, std::string password): serverport(serverport) {
     int len, rc, on = 1;
@@ -149,6 +149,7 @@ Server::Server(int serverport, std::string password): serverport(serverport) {
     int timeout;
     struct pollfd fds[200];
     int nfds = 1, current_size = 0, i, j;
+    this->is_reg = 0;
 
     listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
     if (listen_sd < 0) {
@@ -242,7 +243,6 @@ Server::Server(int serverport, std::string password): serverport(serverport) {
 //------------------------------------------------------------------------------------------------ version c++98
                     // rc = recv(fds[i].fd, static_cast<void*>(const_cast<char*>(buffer.data())), buffer.size(), 0);
 //------------------------------------------------------------------------------------------------ version c++98
-                    std::cout << buffer << " asd "<< rc << std::endl;
                     if (rc < 0) {
                         if (errno != EWOULDBLOCK) {
                             perror("recv() failed");
@@ -255,14 +255,19 @@ Server::Server(int serverport, std::string password): serverport(serverport) {
                         close_conn = 1;
                         break;
                     }
-                    std::string receiveddata(buffer.data(), rc);
-                    std::cout << "Received data: " << receiveddata << std::endl;
                     len = rc;
+//------------------------------------------------------------------------------------------------ 
+
+
+                    std::cout << rc << std::endl;
+                    std::string data(buffer.data(), rc);
+                    std::cout << "Received data: " << data << std::endl;
                     std::cout << len << " bytes received" << std::endl;
-                    if(this->is_reg != 2 && check_pass(receiveddata, password))
-                        check_authenticate(fds[i].fd, receiveddata);
-                    else if(this->is_reg == 2 && this->password == 1)
-                        std::cout << "Registration already completed!" << std::endl;
+                    this->receiveddata = parsdata(data);
+                    check_reg_and_cmds(this->receiveddata, password, fds[i].fd);
+
+
+//------------------------------------------------------------------------------------------------ 
                     rc = send(fds[i].fd, buffer.c_str(), len, 0);
                     if (rc < 0) {
                         perror("send() failed");
