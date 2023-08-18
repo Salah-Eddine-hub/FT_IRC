@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/17 21:48:18 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 21:51:22 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 #include <iostream>
 #include <sys/time.h>
 #include <errno.h>
-// ishould know about this headers
 #include <sys/types.h>
 #include <cstdlib>
 #include <sys/socket.h>
@@ -33,8 +32,10 @@
 #include <vector>
 #include <bits/stdc++.h>
 #include "Channel.hpp"
+#include"Client.hpp"
 
 class Channel;
+class Client;
 
 class Server{
 	public:
@@ -48,20 +49,15 @@ class Server{
 		void check_reg_and_cmds(std::vector<std::string> receiveddata, std::string password, int sockfd);
 
 		void join(std::vector<std::string> receiveddata, int sockfd);
+		int is_valide_name(std::string channel_name, int sockfd);
 
 		void error(int sockfd, const std::string& message);
 		void success(int sockfd, const std::string& message);
 	private:
-		std::map<int, std::pair<std::string, std::string> > usernickMap;
+		std::map<int, Client> usernickMap;
 		std::map<std::string, Channel> channelsMap;
 		std::vector<std::string> receiveddata;
 		int serverport;
 		int password;
-		int is_reg;
-		std::string username;
-		std::string hostname;
-		std::string servername;
-		std::string realname;
-		std::string nickname;
 };
 #endif

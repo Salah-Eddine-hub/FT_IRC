@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/17 23:33:45 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 22:07:58 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Channel
         Channel(std::string channel_name);
         ~Channel();
 
-        void add_member_to_channel(int sockfd, const std::string& nickname);
+        void add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name);
         
 		void error(int sockfd, const std::string& message);
 		void success(int sockfd, const std::string& message);

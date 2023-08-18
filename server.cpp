@@ -139,6 +139,7 @@
 // }
 #include "server.hpp"
 
+
 Server::Server(int serverport, std::string password): serverport(serverport) {
     int len, rc, on = 1;
     int listen_sd = -1, new_sd = -1;
@@ -149,7 +150,6 @@ Server::Server(int serverport, std::string password): serverport(serverport) {
     int timeout;
     struct pollfd fds[200];
     int nfds = 1, current_size = 0, i, j;
-    this->is_reg = 0;
 
     listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
     if (listen_sd < 0) {
@@ -219,6 +219,7 @@ Server::Server(int serverport, std::string password): serverport(serverport) {
                 end_server = 1;
                 break;
             }
+
             if (fds[i].fd == listen_sd) {
                 do {
                     new_sd = accept(listen_sd, NULL, NULL);
@@ -229,52 +230,47 @@ Server::Server(int serverport, std::string password): serverport(serverport) {
                         }
                         break;
                     }
+                    // Client newClient;
+                    usernickMap[new_sd] = Client();
 
                     fds[nfds].fd = new_sd;
-                    fds[nfds].events = POLLIN;
+                    fds[nfds].events = POLLIN ;
                     nfds++;
-
                 } while (new_sd != -1);
             } else {
                 close_conn = 0;
-
-                do {
+                
+                if (fds[i].revents & POLLIN) {
+                    memset(buffer.data(), 0, buffer.size());
                     rc = recv(fds[i].fd, buffer.data(), buffer.size(), 0);
-//------------------------------------------------------------------------------------------------ version c++98
-                    // rc = recv(fds[i].fd, static_cast<void*>(const_cast<char*>(buffer.data())), buffer.size(), 0);
-//------------------------------------------------------------------------------------------------ version c++98
                     if (rc < 0) {
-                        if (errno != EWOULDBLOCK) {
-                            perror("recv() failed");
-                            close_conn = 1;
-                        }
-                        break;
-                    }
-                    if (rc == 0) {
+                        perror("recv() failed");
+                        close_conn = 1;
+                    } else if (rc == 0) {
                         std::cout << "Connection closed" << std::endl;
                         close_conn = 1;
-                        break;
+                    } 
+// --------------------------------------------------------------------------------------------------------------------
+                    else {
+                        // usernickMap[fds[i].fd] = Client();
+                        // Client newClient;
+                        // usernickMap[fds[i].fd] = newClient;
+
+                        len = rc;
+                        std::string data(buffer.data(), rc);
+                        this->receiveddata = parsdata(data);
+                        check_reg_and_cmds(this->receiveddata, password, fds[i].fd);
                     }
-                    len = rc;
-//------------------------------------------------------------------------------------------------ 
-
-
-                    std::cout << rc << std::endl;
-                    std::string data(buffer.data(), rc);
-                    std::cout << "Received data: " << data << std::endl;
-                    std::cout << len << " bytes received" << std::endl;
-                    this->receiveddata = parsdata(data);
-                    check_reg_and_cmds(this->receiveddata, password, fds[i].fd);
-
-
-//------------------------------------------------------------------------------------------------ 
+// --------------------------------------------------------------------------------------------------------------------
+                }
+                
+                if (fds[i].revents & POLLOUT) {
                     rc = send(fds[i].fd, buffer.c_str(), len, 0);
                     if (rc < 0) {
                         perror("send() failed");
                         close_conn = 1;
-                        break;
                     }
-                } while (1);
+                }
 
                 if (close_conn) {
                     close(fds[i].fd);
@@ -304,6 +300,8 @@ Server::Server(int serverport, std::string password): serverport(serverport) {
     }
 }
 
+
 Server::~Server() {
     std::cout << "this is destructor for our server" << std::endl;
 }
+

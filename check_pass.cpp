@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 17:52:11 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/17 21:50:42 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 21:47:31 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 int Server::check_pass(std::vector<std::string> receiveddata, std::string password, int sockfd)
 {
 
-    
-    if(this->password != 1){
+    if(!usernickMap[sockfd].get_pwdconf()){
         if(receiveddata[0] != "pass"){
             error(sockfd, "Error: please use 'pass' command to enter the password and have full access of the server's channels and commands!\n");
             return 0;
@@ -28,8 +27,8 @@ int Server::check_pass(std::vector<std::string> receiveddata, std::string passwo
                 if(receiveddata[1] != password)
                     return (error(sockfd, "Error: Wrong password!\n")), 0;
                 else{
-                    error(sockfd, "Success: password correct! Enjoy chatting!\n");
-                    this->password = 1;
+                    success(sockfd, "Success: password correct! Enjoy chatting!\n");
+                    usernickMap[sockfd].set_pwdconf(1);
                 }
             }
         }
