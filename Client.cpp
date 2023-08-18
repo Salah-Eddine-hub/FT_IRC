@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 21:56:59 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 22:48:31 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,31 +47,31 @@ void Client::set_nickname(std::string nickname) {
 
 // -------------------------------------------------------
 
-int Client::get_pwdconf(){
+const int& Client::get_pwdconf(){
     return (this->pwdconf);
 }
 
-int Client::get_is_reg(){
+const int& Client::get_is_reg(){
     return (this->is_reg);
 }
 
-std::string Client::get_username(){
+const std::string& Client::get_username(){
     return (this->username);
 }
 
-std::string Client::get_hostname(){
+const std::string& Client::get_hostname(){
     return (this->hostname);
 }
 
-std::string Client::get_servername(){
+const std::string& Client::get_servername(){
     return (this->servername);
 }
 
-std::string Client::get_realname(){
+const std::string& Client::get_realname(){
     return (this->realname);
 }
 
-std::string Client::get_nickname(){
+const std::string& Client::get_nickname(){
     return (this->nickname);
 }
 

@@ -6,7 +6,7 @@
 #    By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/08/18 21:13:27 by iellyass         ###   ########.fr        #
+#    Updated: 2023/08/18 23:12:40 by iellyass         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,8 @@ SRCS =	server.cpp\
 		authenticate.cpp\
 		check_pass.cpp\
 		parsdata.cpp\
+		join.cpp\
+		list.cpp\
 		print_error.cpp\
 		main.cpp\
 		check_reg_and_cmds.cpp

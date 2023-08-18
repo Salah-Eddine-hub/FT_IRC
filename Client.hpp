@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:43:37 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 21:55:24 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 22:48:28 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ class Client
         void set_servername(std::string servername);
         void set_realname(std::string realname);
         void set_nickname(std::string nickname);
-        int get_pwdconf();
-        int get_is_reg();
-        std::string get_username();
-        std::string get_hostname();
-        std::string get_servername();
-        std::string get_realname();
-        std::string get_nickname();
+        const int& get_pwdconf();
+        const int& get_is_reg();
+        const std::string& get_username();
+        const std::string& get_hostname();
+        const std::string& get_servername();
+        const std::string& get_realname();
+        const std::string& get_nickname();
 };
 
 

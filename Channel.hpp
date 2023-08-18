@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 22:07:58 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 22:58:35 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ class Channel
 		void success(int sockfd, const std::string& message);
 
         void broadcast(const std::string& message, int excludingSocket);
+
+        const std::string& get_channel_name();
 };
 
 

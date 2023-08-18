@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 22:09:02 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 22:58:48 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void Channel::broadcast(const std::string& message, int excludingsockfd) {
             success(this->members[i], message);
 }
 
-
 void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name){
     std::vector<int>::iterator it = std::find(this->members.begin(), this->members.end(), sockfd);
 
@@ -37,6 +36,11 @@ void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std
         this->members.push_back(sockfd);
     }
     return ;
+}
+
+
+const std::string& Channel::get_channel_name(){
+    return (this->channel_name);
 }
 
 Channel::~Channel() {}

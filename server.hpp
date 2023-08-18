@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/18 21:51:22 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/18 22:34:06 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,10 +49,13 @@ class Server{
 		void check_reg_and_cmds(std::vector<std::string> receiveddata, std::string password, int sockfd);
 
 		void join(std::vector<std::string> receiveddata, int sockfd);
+		void list(std::vector<std::string> receiveddata, int sockfd);
 		int is_valide_name(std::string channel_name, int sockfd);
 
 		void error(int sockfd, const std::string& message);
 		void success(int sockfd, const std::string& message);
+
+		void exec_cmds(std::vector<std::string> receiveddata, int sockfd);
 	private:
 		std::map<int, Client> usernickMap;
 		std::map<std::string, Channel> channelsMap;
