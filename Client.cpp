@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 22:48:31 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/21 20:44:47 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Client::Client() {
     this->pwdconf = 0;
     this->is_reg = 0;
+    this->is_mode = 0;
 }
 
 void Client::set_pwdconf(int pwdconf) {
@@ -23,6 +24,10 @@ void Client::set_pwdconf(int pwdconf) {
 
 void Client::inc_is_reg() {
     this->is_reg++;
+}
+
+void Client::set_is_mode(int mode) {
+    this->is_mode = mode;
 }
 
 void Client::set_username(std::string username) {
@@ -53,6 +58,10 @@ const int& Client::get_pwdconf(){
 
 const int& Client::get_is_reg(){
     return (this->is_reg);
+}
+
+const int& Client::get_is_mode(){
+    return (this->is_mode);
 }
 
 const std::string& Client::get_username(){

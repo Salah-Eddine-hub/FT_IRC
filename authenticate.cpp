@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 15:17:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 22:31:09 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/23 14:31:20 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,11 @@ int Server::nick_cmd(int sockfd, std::vector<std::string> tokens)
 int Server::check_authenticate(int sockfd, std::vector<std::string> tokens)
 {
     if (usernickMap[sockfd].get_is_reg() != 2 && usernickMap[sockfd].get_pwdconf()) {
-        std::cout << "this->is_reg: " << usernickMap[sockfd].get_is_reg() << std::endl;
-        if(usernickMap[sockfd].get_is_reg() != 2 && (tokens[0] != "USER" && tokens[0] != "NICK"))
+        if(usernickMap[sockfd].get_is_reg() != 2 && (tokens[0] != "user" && tokens[0] != "nick"))
             error(sockfd, "Please confirme your identity first by using 'USER' and 'NICK' commands\n");
-        if (!tokens.empty() && tokens[0] == "USER")
+        if (!tokens.empty() && strtolower(tokens[0]) == "user")
             user_cmd(sockfd, tokens);
-        else if (!tokens.empty() && tokens[0] == "NICK")
+        else if (!tokens.empty() && strtolower(tokens[0]) == "nick")
             nick_cmd(sockfd, tokens);
     }
     return 1;

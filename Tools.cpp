@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Tools.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/03 04:01:14 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/21 19:42:33 by iellyass         ###   ########.fr       */
+/*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
+/*   Updated: 2023/08/23 18:56:21 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include"Tools.hpp"
 
-int main(int ac, char *av[]){
-	int port;
-	if (ac != 3){
-		std::cerr << "Wrong num of args" << std::endl;
-		return 0;
-	}
-	port = atoi(av[1]);
-	std::cout << port << std::endl;
-	if(!port){
-		std::cerr << "Error: uncorect port." << std::endl;
-		return 0;
-	}
-	Server server(port, av[2]);
-	return 0;
+std::string strtolower(std::string str) {
+    for (size_t i = 0; i < str.size(); ++i)
+        str[i] = tolower(str[i]);
+    return str;
+}
+
+int str_search(std::string str, char c){
+
+    for (size_t i = 0; i < str.length(); i++){
+        if(str[i] == c)
+            return i;
+    }
+    return -1;
 }

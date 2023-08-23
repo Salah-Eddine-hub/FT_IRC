@@ -6,16 +6,16 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 22:58:35 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/21 20:54:36 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 #include<iostream>
-#include"server.hpp"
+// #include"server.hpp"
 
-class Server;
+// class Server;
 
 class Channel
 {
@@ -37,6 +37,5 @@ class Channel
 
         const std::string& get_channel_name();
 };
-
 
 #endif

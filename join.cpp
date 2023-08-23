@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 23:42:37 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/23 14:35:42 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,17 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
         error(sockfd, "Error: Syntax error!\n");
         return ;
     }
-    if(usernickMap[sockfd].get_is_reg() == 2 ){
-        if(!is_valide_name(receiveddata[1], sockfd))
-            return ;
-        if (channelsMap.find(receiveddata[1]) != channelsMap.end())
-            channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
-        else {
-            error(sockfd, "Channel not found!\n");
-            success(sockfd, "Success: channel created successfully!\n");
-            channelsMap[receiveddata[1]] = Channel(receiveddata[1]);
-            channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
-        }
+    if(!is_valide_name(receiveddata[1], sockfd))
+        return ;
+    if (channelsMap.find(receiveddata[1]) != channelsMap.end())
+        channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
+    else {
+        error(sockfd, "Channel not found!\n");
+        success(sockfd, "Success: channel created successfully!\n");
+        channelsMap[receiveddata[1]] = Channel(receiveddata[1]);
+        channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
+        usernickMap[sockfd].set_is_mode(1);
     }
+    
     return ;
 }

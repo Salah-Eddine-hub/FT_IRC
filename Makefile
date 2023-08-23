@@ -6,17 +6,18 @@
 #    By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/08/18 23:12:40 by iellyass         ###   ########.fr        #
+#    Updated: 2023/08/23 14:11:11 by iellyass         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
-HEADER =	server.hpp Channel.hpp
+HEADER =	server.hpp Channel.hpp Tools.hpp
 
 SRCS =	server.cpp\
 		Channel.cpp\
 		Client.cpp\
+		privmsg.cpp\
 		authenticate.cpp\
 		check_pass.cpp\
 		parsdata.cpp\
@@ -24,7 +25,8 @@ SRCS =	server.cpp\
 		list.cpp\
 		print_error.cpp\
 		main.cpp\
-		check_reg_and_cmds.cpp
+		check_reg_and_cmds.cpp\
+		Tools.cpp
 
 CC =	c++
 # -std=c++98
