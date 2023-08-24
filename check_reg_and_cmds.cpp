@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_reg_and_cmds.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:41:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 23:12:01 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/20 15:22:07 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <ctype.h>
 
 void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
+    //here
     if(receiveddata[0] == "join")
         join(receiveddata, sockfd);
     else if(receiveddata[0] == "list")

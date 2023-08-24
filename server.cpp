@@ -1,154 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/08/20 14:26:20 by sharrach          #+#    #+#             */
+/*   Updated: 2023/08/20 15:02:45 by sharrach         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-// int Server::check_authenticate(int sockfd, std::string buffer)
-// {
-//     std::vector<std::string> tokens;
-//     std::istringstream iss(buffer);
-//     std::string holder;
-
-//     std::map<int, std::string>::iterator it = this->usernickMap.find(sockfd);
-//     std::cout << "sockfd: " << sockfd << std::endl;
-//     if (it == usernickMap.end()) {
-//         // while (getline(iss, holder, ' ')) {
-//         //     tokens.push_back(holder);
-//         // }
-//         // while (getline(iss, holder, ' ')) {
-//         //     size_t firstNonSpace = holder.find_first_not_of(" \t\n\r");
-//         //     size_t lastNonSpace = holder.find_last_not_of(" \t\n\r");
-            
-//         //     if (firstNonSpace != std::string::npos) {
-//         //         holder = holder.substr(firstNonSpace, lastNonSpace - firstNonSpace + 1);
-//         //         tokens.push_back(holder);
-//         //     }
-//         // }
-//         while (std::getline(iss, holder, ' ')) {
-//             if (!holder.empty()) {
-//                 if (holder.back() == '\n')
-//                     holder.pop_back();
-//                 tokens.push_back(holder);
-//             }
-//         }
-//         // while (getline(iss, holder, ' ')) {
-//         //     size_t firstNonSpace = holder.find_first_not_of(" \t\n\r");
-//         //     size_t lastNonSpace = holder.find_last_not_of(" \t\n\r");
-                    
-//         //     if (firstNonSpace != std::string::npos) {
-//         //         holder = holder.substr(firstNonSpace, lastNonSpace - firstNonSpace + 1);
-//         //         if (!holder.empty()) { // Check if the token is not empty after trimming
-//         //             tokens.push_back(holder);
-//         //         }
-//         //     }
-//         // }
-//         // tokens[0] = tokens[0].substr(0, 4);
-//         for (size_t i = 0; i < tokens.size(); i++)
-//             std::cout << i << "--------: " << tokens[i] << " tokens.size() :" << tokens.size() << std::endl;
-//         if (!tokens.empty() && tokens[0] == "USER") {
-//             if (tokens.size() != 5){
-//                 std::cout << "before\n";
-//                 std::cout << "USER:: wrong number of arguments" << std::endl;
-//                 return 0;
-//             }
-//             else{
-//                 std::cout << "else\n";
-//                 this->username = tokens[1];
-//                 this->hostname = tokens[2];
-//                 this->servername = tokens[3];
-//                 this->realname = tokens[4];
-//                 usernickMap[sockfd] = realname;
-//                 std::cout << "usernickMap[sockfd]: " << usernickMap[sockfd] <<std::endl;
-//                 std::cout <<  "USER hh :" << this->username << this->hostname << this->servername << this->realname << std::endl;
-//             }        
-//         }
-//     }
-//     else {
-//         std::cout << "sockfd " << sockfd << " is already associated with username: " << it->second << std::endl;
-//         return 1;
-//     }
-
-//     return 1;
-// }
-
-// int Server::check_authenticate(int sockfd, std::string buffer)
-// {
-//     std::map<int, std::string> usernickMap;
-//     std::vector<std::string> tokens;
-//     std::istringstream iss(buffer);
-//     std::string holder;
-
-//     std::map<int, std::string>::iterator it = usernickMap.find(sockfd);
-//     std::cout << "sockfd: " << sockfd << std::endl;
-//     if (it == usernickMap.end()) {
-//         std::cout << "Existing sockfd " << sockfd << " associated with username: " << it->second << std::endl;
-//         return 1; // Return or perform desired action
-//     }
-//     while (std::getline(iss, holder, ' ')) {
-//         if (!holder.empty()) {
-//             if (holder.back() == '\n') {
-//                 holder.pop_back(); // Remove newline character
-//             }
-//             tokens.push_back(holder);
-//         }
-//     }
-//     for (size_t i = 0; i < tokens.size(); i++)
-//     {
-//         std::cout << i << "--------: " << tokens[i] << " tokens.size() :" << tokens.size() << std::endl;
-//     }
-//     // std::cout << "check_authenticate: " << tokens[0] << ", tokens.size()" << tokens.size() << std::endl;
-//     if(tokens[0] == "USER"){
-//         std::cout <<"user dkhol \n";
-//         if (tokens.size() != 5){
-//             std::cout << "USER:: wrong number of arguments" << std::endl;
-//             return 0;
-//         }
-//         else{
-//             this->username = tokens[1];
-//             this->hostname = tokens[2];
-//             this->servername = tokens[3];
-//             this->realname = tokens[4];
-//             usernickMap[sockfd] = realname;
-//             std::cout << "usernickMap[sockfd]: " << usernickMap[sockfd] <<std::endl;
-//             std::cout << sockfd <<  "USER hh :" << this->username << this->hostname << this->servername << this->realname << std::endl;
-//         }
-//     }
-
-//     else if(tokens[0] == "NICK"){
-//         std::cout <<"nick dkhol \n";
-//         if (tokens.size() != 2){
-//             std::cout << "NICK:: wrong number of arguments" << std::endl;
-//             return 0;
-//         }
-//         else{
-//             this->nickname = tokens[1];
-//             std::cout << sockfd << " NICK hh :" << this->nickname << std::endl;
-//         }
-//     }
-//     // int i = sockfd;
-//     // std::string command, username, hostname, servername, realname;
-
-//     // iss >> command >> username >> hostname >> servername;
-//     // std::getline(iss, realname);
-//     // std::cout << "aaaaaaaaaaaaaaaaa" << command << username << hostname << servername << std::endl;
-//     // std::cout << "servername" << servername << std::endl;
-//     // std::cout << "realname" << realname << std::endl;
-//     // std::cout << buffer << " Welcome to our irc server, please confirme your identity by using commands USER and NICK" << std::endl;
-//     // if (buffer.length() >= 5 && strncmp(buffer.c_str(), "USER", 4) == 0)
-//     // {
-//     //     std::cout << i << "khdmat\n";
-//     // }
-//     std::cout << "return " << std::endl;
-//     return 1;
-// }
 #include "server.hpp"
 
-
 Server::Server(int serverport, std::string password): serverport(serverport) {
-    int len, rc, on = 1;
+    int on = 1;
     int listen_sd = -1, new_sd = -1;
     int end_server = 0, compress_array = 0;
-    int close_conn;
     std::string buffer(1024, '\0');
-    struct sockaddr_in6 addr;
-    int timeout;
-    struct pollfd fds[200];
     int nfds = 1, current_size = 0, i, j;
 
     listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
