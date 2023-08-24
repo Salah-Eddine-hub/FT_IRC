@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/21 20:54:36 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/24 20:27:19 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class Channel
 		std::vector<int> members;
         std::string channel_name;
         std::string channel_topic;
+        int is_member;
     public:
         Channel();
         Channel(std::string channel_name);
@@ -36,6 +37,8 @@ class Channel
         void broadcast(const std::string& message, int excludingSocket);
 
         const std::string& get_channel_name();
+        const int& get_is_member();
+        void set_is_member(int is_member);
 };
 
 #endif

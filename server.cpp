@@ -56,7 +56,7 @@ Server::Server(int serverport, std::string password) {
 
     fds[0].fd = listen_sd;
     fds[0].events = POLLIN;
-    timeout = 30000;
+    timeout = 30000 * 30000;
 
     do {
         std::cout << "Waiting on poll()..." << std::endl;

@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:06:54 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/23 19:22:09 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/24 17:36:55 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ std::vector<std::string> Server::parsdata(std::string receiveddata)
                 is_col = 1;
             }
             else if (str_search(holder, ':') > 0){
-                    
+                // working on it
             }
             else {
                 if(is_col == 0)
