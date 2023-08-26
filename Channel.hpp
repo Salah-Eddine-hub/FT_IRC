@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/24 20:27:19 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/26 13:47:22 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,11 @@
 class Channel
 {
     private:
-		std::vector<int> members;
+		std::vector<int> membersMap;
         std::string channel_name;
         std::string channel_topic;
         int is_member;
+        int big_boss;
     public:
         Channel();
         Channel(std::string channel_name);
@@ -35,10 +36,12 @@ class Channel
 		void success(int sockfd, const std::string& message);
 
         void broadcast(const std::string& message, int excludingSocket);
+		void remove_the_user(int sockfd, std::string nickname);
 
         const std::string& get_channel_name();
-        const int& get_is_member();
-        void set_is_member(int is_member);
+        const int& get_big_boss();
+        void set_big_boss(int sockfd);
+        int get_is_member(int sockfd);
 };
 
 #endif

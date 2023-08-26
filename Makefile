@@ -6,7 +6,7 @@
 #    By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/08/24 18:17:11 by iellyass         ###   ########.fr        #
+#    Updated: 2023/08/25 17:34:30 by iellyass         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,6 +26,7 @@ SRCS =	server.cpp\
 		print_error.cpp\
 		main.cpp\
 		msg.cpp\
+		kick.cpp\
 		check_reg_and_cmds.cpp\
 		Tools.cpp
 

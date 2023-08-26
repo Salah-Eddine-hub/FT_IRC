@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/24 20:00:48 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/25 17:47:21 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ class Server{
 		void success(int sockfd, const std::string& message);
 
 		void exec_cmds(std::vector<std::string> receiveddata, int sockfd);
+
+		int get_sockfd(std::string usernickname);
 	private:
 		std::map<int, Client> usernickMap;
 		std::map<std::string, Channel> channelsMap;

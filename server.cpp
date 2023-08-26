@@ -163,8 +163,15 @@ Server::Server(int serverport, std::string password) {
     }
 }
 
+int Server::get_sockfd(std::string usernickname){
+    std::map<int, Client>::iterator it;
+    for (it = usernickMap.begin(); it != usernickMap.end(); it++){
+        if(it->second.get_nickname() == usernickname)
+            return it->first;
+    }
+    return -1;    
+}
 
 Server::~Server() {
     std::cout << "this is destructor for our server" << std::endl;
 }
-
