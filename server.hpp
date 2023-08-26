@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/25 17:47:21 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/26 16:21:54 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ class Server{
 		void privmsg(std::vector<std::string> receiveddata, int sockfd);
 		void msg(std::vector<std::string> receiveddata, int sockfd);
 		void kick(std::vector<std::string> receiveddata, int sockfd);
+		void invite(std::vector<std::string> receiveddata, int sockfd);
+		void topic(std::vector<std::string> receiveddata, int sockfd);
 
 		int is_valide_name(std::string channel_name, int sockfd);
 

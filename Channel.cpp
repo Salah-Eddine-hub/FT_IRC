@@ -6,13 +6,16 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/26 14:03:14 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/26 16:34:15 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"server.hpp"
 
-Channel::Channel() {}
+Channel::Channel() {
+    this->is_member = 0;
+    this->big_boss = 0;
+}
 
 Channel::Channel(std::string channel_name) {
     this->channel_name = channel_name;
@@ -20,6 +23,51 @@ Channel::Channel(std::string channel_name) {
     this->big_boss = 0;
 }
 
+
+Channel::~Channel() {}
+
+
+// ---------------------------------------------------------------
+
+const std::string& Channel::get_channel_name(){
+    return (this->channel_name);
+}
+
+const std::string& Channel::get_channel_topic(){
+    return (this->channel_topic);
+}
+
+const int& Channel::get_big_boss(){
+    return (this->big_boss);
+}
+
+int Channel::get_is_member(int sockfd) {
+    std::vector<int>::iterator it = std::find(this->membersMap.begin(), this->membersMap.end(), sockfd);
+    if(it != this->membersMap.end())
+        return 1;
+    return 0;
+}
+
+void Channel::set_big_boss(int sockfd){
+    this->big_boss = sockfd;
+}
+
+void Channel::set_channel_topic(std::string channel_topic){
+    this->channel_topic = channel_topic;
+}
+
+// ---------------------------------------------------------------
+
+void Channel::remove_the_user(int sockfd, std::string nickname)
+{
+    std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
+    
+    if(it != membersMap.end()){
+        membersMap.erase(it);
+        success(sockfd, "You have been kicked from the channel:" + get_channel_name() + "!\n");
+        broadcast(nickname + " got kicked from the channel!\n", sockfd);
+    }
+}
 
 void Channel::broadcast(const std::string& message, int excludingsockfd) {
     for (size_t i = 0; i < this->membersMap.size(); ++i)
@@ -41,35 +89,3 @@ void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std
     }
     return ;
 }
-
-const std::string& Channel::get_channel_name(){
-    return (this->channel_name);
-}
-
-void Channel::set_big_boss(int sockfd){
-    this->big_boss = sockfd;
-}
-
-const int& Channel::get_big_boss(){
-    return (this->big_boss);
-}
-
-int Channel::get_is_member(int sockfd) {
-    std::vector<int>::iterator it = std::find(this->membersMap.begin(), this->membersMap.end(), sockfd);
-    if(it != this->membersMap.end())
-        return 1;
-    return 0;
-}
-
-void Channel::remove_the_user(int sockfd, std::string nickname)
-{
-    std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
-    
-    if(it != membersMap.end()){
-        membersMap.erase(it);
-        success(sockfd, "You have been kicked from the channel:" + get_channel_name() + "!\n");
-        broadcast(nickname + " got kicked from the channel!\n", sockfd);
-    }
-}
-
-Channel::~Channel() {}

@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/26 13:47:22 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/26 16:34:42 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ class Channel
 
         const std::string& get_channel_name();
         const int& get_big_boss();
-        void set_big_boss(int sockfd);
         int get_is_member(int sockfd);
+        void set_big_boss(int sockfd);
+        void set_channel_topic(std::string sockfd);
+        const std::string& get_channel_topic();
 };
 
 #endif

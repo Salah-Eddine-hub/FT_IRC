@@ -1,34 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   kick.cpp                                           :+:      :+:    :+:   */
+/*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/24 19:59:15 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/26 16:41:52 by iellyass         ###   ########.fr       */
+/*   Created: 2023/08/26 15:34:15 by iellyass          #+#    #+#             */
+/*   Updated: 2023/08/26 16:17:02 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"server.hpp"
 
-void Server::kick(std::vector<std::string> receiveddata, int sockfd)
+void Server::invite(std::vector<std::string> receiveddata, int sockfd)
 {
 
     if(receiveddata.size() < 3)
         error(sockfd, "Error: wrong arguments!\n");
-    else if(channelsMap.find(receiveddata[1]) != channelsMap.end())
+    else if(channelsMap.find(receiveddata[2]) != channelsMap.end() )
     {
-        if(!channelsMap[receiveddata[1]].get_is_member(sockfd))
+        if(!channelsMap[receiveddata[2]].get_is_member(sockfd)) 
             error(sockfd, "Error: You are not a member of the channel!\n");
-        else if (channelsMap[receiveddata[1]].get_big_boss() != sockfd)
+        else if (channelsMap[receiveddata[2]].get_big_boss() != sockfd)
             error(sockfd, "Error: You are not an OP in this channel!\n");
         else 
         {
-            if (channelsMap[receiveddata[1]].get_is_member(get_sockfd(receiveddata[2])))
-                channelsMap[receiveddata[1]].remove_the_user(get_sockfd(receiveddata[2]), receiveddata[2]);
-            else
+            if (usernickMap.find(get_sockfd(receiveddata[1])) == usernickMap.end())
                 error(sockfd, "Error: User not found!\n");
+            else if (channelsMap[receiveddata[2]].get_is_member(get_sockfd(receiveddata[1])))
+                error(sockfd, "Error: " + receiveddata[1] + " already a member of this channel!\n");
+            else
+                success(get_sockfd(receiveddata[1]), usernickMap[sockfd].get_nickname() + " invited you to join " + receiveddata[2] + "!\n");
         }
     }
     else

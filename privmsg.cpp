@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 15:57:16 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/26 14:40:48 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/26 17:03:30 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ void Server::privmsg(std::vector<std::string> receiveddata, int sockfd){
                 receiveddata[j] = receiveddata[j].substr(firstnonspace);
             msg += receiveddata[j] + ' ';
         }
+        msg[msg.size() - 1] = '\n';
         msg = "You received message from " + usernickMap[sockfd].get_nickname() + ": " + msg;
-        success(get_sockfd(receiveddata[1]), (msg + '\n'));
+        success(get_sockfd(receiveddata[1]), msg);
     }
     else        
         error(sockfd, "Error: User not found!\n");
