@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 15:34:15 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/26 16:17:02 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/27 13:51:58 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,10 @@ void Server::invite(std::vector<std::string> receiveddata, int sockfd)
                 error(sockfd, "Error: User not found!\n");
             else if (channelsMap[receiveddata[2]].get_is_member(get_sockfd(receiveddata[1])))
                 error(sockfd, "Error: " + receiveddata[1] + " already a member of this channel!\n");
-            else
+            else {
+                usernickMap[get_sockfd(receiveddata[1])].set_is_invited(receiveddata[2]);
                 success(get_sockfd(receiveddata[1]), usernickMap[sockfd].get_nickname() + " invited you to join " + receiveddata[2] + "!\n");
+            }
         }
     }
     else

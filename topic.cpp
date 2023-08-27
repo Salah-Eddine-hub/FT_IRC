@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:21:27 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/26 17:49:04 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/27 14:44:57 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ void Server::topic(std::vector<std::string> receiveddata, int sockfd)
         {
             if(!channelsMap[receiveddata[1]].get_is_member(sockfd))
                 error(sockfd, "Error: You are not a member of the channel!\n");
-            else if (channelsMap[receiveddata[1]].get_big_boss() != sockfd)
-                error(sockfd, "Error: You are not an OP in this channel!\n");
+            else if (channelsMap[receiveddata[1]].get_big_boss() != sockfd && channelsMap[receiveddata[1]].get_is_topic_restricted())
+                error(sockfd, "Error: Only OPS can change this channel's topic!\n");
             else{
                 for (size_t i = 2; i < receiveddata.size(); i++)
                     msg += receiveddata[i] + ' ';
@@ -32,7 +32,6 @@ void Server::topic(std::vector<std::string> receiveddata, int sockfd)
                 else
                     channelsMap[receiveddata[1]].set_channel_topic(msg);
             }
-
         }
         else
             error(sockfd, "Error: Channel not found!\n");

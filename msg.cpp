@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 17:59:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/24 18:46:54 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/27 15:40:12 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ void Server::msg(std::vector<std::string> receiveddata, int sockfd){
                         receiveddata[i] = receiveddata[i].substr(firstnonspace);
                 message += receiveddata[i] + ' ';
             }
-            message[message.size() - 1] = '\n';
-            channelsMap[receiveddata[1]].broadcast(usernickMap[sockfd].get_nickname() + " sent a message from " + receiveddata[1] + " channel: " + message, sockfd);
+            message.resize(message.size() - 1);
+            channelsMap[receiveddata[1]].broadcast(usernickMap[sockfd].get_nickname() + " sent a message from " + receiveddata[1] + " channel: " + message + '\n', sockfd);
         } 
         else 
             error(sockfd, "Error: Channel not found!\n");

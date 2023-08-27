@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:06:54 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/24 17:36:55 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/27 20:30:46 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,7 @@ std::vector<std::string> Server::parsdata(std::string receiveddata)
     std::vector<std::string> tokens;
     std::istringstream iss(receiveddata);
     std::string holder;
-
-//     // while (std::getline(iss, holder, ' ')) {
-//     //     if (!holder.empty()) {
-//     //         if (holder.back() == '\n')
-//     //             holder.pop_back();
-//     //         tokens.push_back(holder);
-//     //     }
-//     // }
-
-// // issam test :hh 3ndak qwer : fads
+    
     int is_col = 0;
     std::string holder2;
     while (std::getline(iss, holder, ' ')) {

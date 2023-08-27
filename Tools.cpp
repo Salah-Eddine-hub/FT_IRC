@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/23 18:56:21 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/27 20:50:06 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,16 @@ int str_search(std::string str, char c){
             return i;
     }
     return -1;
+}
+
+int is_num(std::string arg)
+{
+    int i = 0;
+    while (arg[i])
+    {
+        if (!isdigit(arg[i]))
+            return 0;
+        i++;
+    }
+    return 1;
 }

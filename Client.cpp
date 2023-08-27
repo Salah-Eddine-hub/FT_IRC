@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/25 17:08:22 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/27 13:58:10 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Client::Client() {
     this->pwdconf = 0;
     this->is_reg = 0;
     this->is_mode = 0;
+    this->is_invited = 0;
 }
 
 void Client::set_pwdconf(int pwdconf) {
@@ -28,6 +29,13 @@ void Client::inc_is_reg() {
 
 void Client::set_is_mode(int mode) {
     this->is_mode = mode;
+}
+
+void Client::set_is_invited(std::string channel_name) {
+    std::vector<std::string>::iterator it = std::find(this->channelinvitedtoMap.begin(), this->channelinvitedtoMap.end(), channel_name);
+
+    if(it == this->channelinvitedtoMap.end())
+        this->channelinvitedtoMap.push_back(channel_name);
 }
 
 void Client::set_username(std::string username) {
@@ -62,6 +70,14 @@ const int& Client::get_is_reg(){
 
 const int& Client::get_is_mode(){
     return (this->is_mode);
+}
+
+int Client::get_is_invited(std::string channel_name){
+    std::vector<std::string>::iterator it = std::find(this->channelinvitedtoMap.begin(), this->channelinvitedtoMap.end(), channel_name);
+
+    if(it != this->channelinvitedtoMap.end())
+        return 1;
+    return 0;
 }
 
 const std::string& Client::get_username(){

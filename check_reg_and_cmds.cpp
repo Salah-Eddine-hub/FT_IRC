@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:41:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/26 16:43:23 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/27 12:48:43 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
         invite(receiveddata, sockfd);
     else if(strtolower(receiveddata[0]) == "topic")
         topic(receiveddata, sockfd);
+    else if(strtolower(receiveddata[0]) == "mode")
+        mode(receiveddata, sockfd);
     else
         std::cout << "hada makan alkhawa dyali\n";
 }
