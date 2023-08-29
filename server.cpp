@@ -117,11 +117,16 @@ Server::Server(int serverport, std::string password) {
                     else {
                         len = rc;
                         std::string data(buffer.data(), rc);
+                        data.resize(data.size() - 1);
+                        data[data.size()] = '\0';
                         this->receiveddata = parsdata(data);
                         
-                    for (size_t i = 0; i < this->receiveddata.size(); ++i) {
-                        std::cout << "string" << i + 1 << ": \"" << this->receiveddata[i] << "\"" << std::endl;
-                    }
+                    // for (size_t i = 0; i < this->receiveddata.size(); ++i) {
+                    //     std::cout << "string" << i + 1 << ": \"" << this->receiveddata[i] << "\"" << std::endl;
+                    // }
+                        if (this->receiveddata.empty())
+                            std::cout << "wrong args\n";
+                        else
                         check_reg_and_cmds(this->receiveddata, fds[i].fd);
                     }
 // --------------------------------------------------------------------------------------------------------------------

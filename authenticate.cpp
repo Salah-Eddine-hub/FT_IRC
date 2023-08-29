@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/15 15:17:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/23 14:31:20 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/29 15:21:09 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 int Server::user_cmd(int sockfd, std::vector<std::string> tokens)
 {
-    if(!usernickMap[sockfd].get_realname().empty()){
+    if (tokens.size() != 5)
+        return (error(sockfd, "Error: USER: wrong number of arguments\n")), 0;
+    if(!usernickMap[sockfd].get_realname().empty()) {
         success(sockfd, "This client is already associated with realname\n");
         return 1;
     }
-    if (tokens.size() != 5)
-        return (error(sockfd, "Error: USER: wrong number of arguments\n")), 0;
     else{
         usernickMap[sockfd].set_username(tokens[1]);
         usernickMap[sockfd].set_hostname(tokens[2]);
@@ -37,13 +37,18 @@ int Server::user_cmd(int sockfd, std::vector<std::string> tokens)
 
 int Server::nick_cmd(int sockfd, std::vector<std::string> tokens)
 {
-    if(!usernickMap[sockfd].get_nickname().empty()){
+    std::map<int, Client>::iterator it;
+    if (tokens.size() != 2)
+        return (error(sockfd, "Error: NICK: wrong number of arguments\n")), 0;
+    if(!usernickMap[sockfd].get_nickname().empty()) {
         success(sockfd, "this client is already associated with nickname\n");
         return 1;
     }
-    if (tokens.size() != 2)
-        return (error(sockfd, "Error: NICK: wrong number of arguments\n")), 0;
     else{
+        for (it = usernickMap.begin(); it != usernickMap.end(); it++){
+            if(it->second.get_nickname() == tokens[1])
+                return (error(sockfd, "Error: Nickname already associated with another user\n")), 0;
+        }
         usernickMap[sockfd].set_nickname(tokens[1]);
         std::cout << "usernickMap[sockfd]: " << usernickMap[sockfd].get_realname() << " " << usernickMap[sockfd].get_nickname() << std::endl;
     }
