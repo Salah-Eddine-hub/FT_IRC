@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 17:48:15 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/30 19:23:49 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
             error(sockfd, "Error: Wrong number of arguments!\n");
         if (!channelsMap[receiveddata[1]].get_is_pwd_needed().empty() && receiveddata.size() < 3 && !channelsMap[receiveddata[1]].get_is_member(sockfd))
             error(sockfd, "Error: Wrong number of arguments. You need a password to join this channel!\n");
-        // if(channelsMap[receiveddata[1]].get_limit() > 0 && (channelsMap[receiveddata[1]].get_limit() <= channelsMap[receiveddata[1]].get_current_users()))
-        //     error(sockfd, "Error: user limit for the channel has been reached!\n");
         else if (!channelsMap[receiveddata[1]].get_is_pwd_needed().empty() && receiveddata.size() >= 3) 
         {
             std::string pwd;

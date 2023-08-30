@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 14:23:38 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/30 19:26:10 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,4 +37,13 @@ int is_num(std::string arg)
         i++;
     }
     return i;
+}
+
+
+void error(int sockfd, const std::string& message) {
+    send(sockfd, message.c_str(), message.size(), 0);
+}
+
+void success(int sockfd, const std::string& message) {
+    send(sockfd, message.c_str(), message.size(), 0);
 }

@@ -93,7 +93,6 @@ Server::Server(int serverport, std::string password) {
                         }
                         break;
                     }
-                    // Client newClient;
                     usernickMap[new_sd] = Client();
 
                     fds[nfds].fd = new_sd;
@@ -120,10 +119,6 @@ Server::Server(int serverport, std::string password) {
                         data.resize(data.size() - 1);
                         data[data.size()] = '\0';
                         this->receiveddata = parsdata(data);
-                        
-                    // for (size_t i = 0; i < this->receiveddata.size(); ++i) {
-                    //     std::cout << "string" << i + 1 << ": \"" << this->receiveddata[i] << "\"" << std::endl;
-                    // }
                         if (this->receiveddata.empty())
                             std::cout << "wrong args\n";
                         else
