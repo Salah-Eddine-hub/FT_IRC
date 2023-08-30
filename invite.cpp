@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 15:34:15 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/27 13:51:58 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/30 18:21:11 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void Server::invite(std::vector<std::string> receiveddata, int sockfd)
     {
         if(!channelsMap[receiveddata[2]].get_is_member(sockfd)) 
             error(sockfd, "Error: You are not a member of the channel!\n");
-        else if (channelsMap[receiveddata[2]].get_big_boss() != sockfd)
+        else if (!channelsMap[receiveddata[2]].get_is_operator(sockfd))
             error(sockfd, "Error: You are not an OP in this channel!\n");
         else 
         {

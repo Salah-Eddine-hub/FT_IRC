@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/27 20:54:20 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/30 17:48:15 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
         error(sockfd, "Error: Syntax error!\n");
         return ;
     }
+    receiveddata[1] = strtolower(receiveddata[1]);
     if(!is_valide_name(receiveddata[1], sockfd))
         return ;
     if (channelsMap.find(receiveddata[1]) != channelsMap.end()) 
@@ -38,7 +39,7 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
             error(sockfd, "Channel is set to invites only!\n");
         if (channelsMap[receiveddata[1]].get_is_pwd_needed().empty() && receiveddata.size() != 2) 
             error(sockfd, "Error: Wrong number of arguments!\n");
-        if (!channelsMap[receiveddata[1]].get_is_pwd_needed().empty() && receiveddata.size() < 3)
+        if (!channelsMap[receiveddata[1]].get_is_pwd_needed().empty() && receiveddata.size() < 3 && !channelsMap[receiveddata[1]].get_is_member(sockfd))
             error(sockfd, "Error: Wrong number of arguments. You need a password to join this channel!\n");
         // if(channelsMap[receiveddata[1]].get_limit() > 0 && (channelsMap[receiveddata[1]].get_limit() <= channelsMap[receiveddata[1]].get_current_users()))
         //     error(sockfd, "Error: user limit for the channel has been reached!\n");
@@ -65,7 +66,7 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
         success(sockfd, "Success: channel created successfully!\n");
         channelsMap[receiveddata[1]] = Channel(receiveddata[1]);
         channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
-        channelsMap[receiveddata[1]].set_big_boss(sockfd);
+        channelsMap[receiveddata[1]].set_is_operator(sockfd);
     }
     
     return ;

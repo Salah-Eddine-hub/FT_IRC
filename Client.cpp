@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/27 13:58:10 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/30 17:44:07 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 Client::Client() {
     this->pwdconf = 0;
     this->is_reg = 0;
-    this->is_mode = 0;
     this->is_invited = 0;
 }
 
@@ -25,10 +24,6 @@ void Client::set_pwdconf(int pwdconf) {
 
 void Client::inc_is_reg() {
     this->is_reg++;
-}
-
-void Client::set_is_mode(int mode) {
-    this->is_mode = mode;
 }
 
 void Client::set_is_invited(std::string channel_name) {
@@ -66,10 +61,6 @@ const int& Client::get_pwdconf(){
 
 const int& Client::get_is_reg(){
     return (this->is_reg);
-}
-
-const int& Client::get_is_mode(){
-    return (this->is_mode);
 }
 
 int Client::get_is_invited(std::string channel_name){

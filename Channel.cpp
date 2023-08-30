@@ -6,29 +6,29 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/27 20:56:11 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/30 18:02:55 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"server.hpp"
 
 Channel::Channel() {
-    this->big_boss = 0;
     this->is_invite_only = 0;
     this->is_topic_restricted = 0;
     this->is_pwd_needed = "";
     this->limit = 0;
     this->curr_users = 0;
+    this->is_operator = 0;
 }
 
 Channel::Channel(std::string channel_name) {
     this->channel_name = channel_name;
-    this->big_boss = 0;
     this->is_invite_only = 0;
     this->is_topic_restricted = 0;
     this->is_pwd_needed = "";
     this->limit = 0;
     this->curr_users = 0;
+    this->is_operator = 0;
 }
 
 
@@ -39,10 +39,6 @@ Channel::~Channel() {}
 
 const std::string& Channel::get_channel_name(){
     return (this->channel_name);
-}
-
-int Channel::get_big_boss(){
-    return (this->big_boss);
 }
 
 const std::string& Channel::get_channel_topic(){
@@ -75,11 +71,23 @@ int Channel::get_limit(){
 int Channel::get_current_users(){
     return(this->curr_users);
 }
+
+int Channel::get_is_operator(int sockfd){
+    std::vector<int>::iterator it = std::find(this->opsMap.begin(), this->opsMap.end(), sockfd);
+
+    if(it != this->opsMap.end())
+        return 1;
+    return 0;
+}
 // --------------------------------------------------------------------------------------------------
 
-void Channel::set_big_boss(int sockfd){
-    this->big_boss = sockfd;
+void Channel::set_is_operator(int is_op) {
+    std::vector<int>::iterator it = std::find(this->opsMap.begin(), this->opsMap.end(), is_op);
+
+    if(it == this->opsMap.end())
+        this->opsMap.push_back(is_op);
 }
+
 
 void Channel::set_channel_topic(std::string channel_topic){
     this->channel_topic = channel_topic;
@@ -125,15 +133,39 @@ void Channel::remove_the_user(int sockfd, std::string nickname)
     }
 }
 
+void Channel::leave_the_channel(int sockfd, std::string nickname)
+{
+    std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
+    
+    if(it != membersMap.end()){
+        membersMap.erase(it);
+        success(sockfd, "You left the channel:" + get_channel_name() + "\n");
+        broadcast(nickname + " left the channel: " + get_channel_name() + "\n", sockfd);
+        this->dec_current_users();
+    }
+}
+
+void Channel::remove_the_operator(int sockfd)
+{
+    std::vector<int>::iterator it = std::find(opsMap.begin(), opsMap.end(), sockfd);
+    
+    if(it != opsMap.end()){
+        opsMap.erase(it);
+    }
+}
+
 void Channel::broadcast(const std::string& message, int excludingsockfd) {
-    for (size_t i = 0; i < this->membersMap.size(); ++i)
-        if (this->membersMap[i] != excludingsockfd)
+    for (size_t i = 0; i < this->membersMap.size(); ++i) {
+        if(excludingsockfd == -1)
             success(this->membersMap[i], message);
+        else if (this->membersMap[i] != excludingsockfd)
+            success(this->membersMap[i], message);
+        }
 }
 
 void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name){
-    std::vector<int>::iterator it = std::find(this->membersMap.begin(), this->membersMap.end(), sockfd);
 
+    std::vector<int>::iterator it = std::find(this->membersMap.begin(), this->membersMap.end(), sockfd);
     if(it != this->membersMap.end())
         error(sockfd, "You are already a member of this channel!\n");
     else if(this->get_limit() > 0 && (this->get_limit() <= this->get_current_users()))

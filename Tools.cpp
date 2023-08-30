@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/27 20:50:06 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/08/30 14:23:38 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int is_num(std::string arg)
     while (arg[i])
     {
         if (!isdigit(arg[i]))
-            return 0;
+            return i;
         i++;
     }
-    return 1;
+    return i;
 }
