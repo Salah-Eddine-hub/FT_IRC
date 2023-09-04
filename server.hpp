@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/30 19:37:21 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/04 10:19:54 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define SERVER_HPP
 
 #include <string>
+#include <string.h>
 #include <cstring>
 #include <unistd.h>
 #include <fstream>
@@ -29,8 +30,9 @@
 #include <sys/ioctl.h>
 #include <map>
 #include <sstream>
+#include <fcntl.h>
 #include <vector>
-#include <bits/stdc++.h>
+// #include <bits/stdc++.h>
 #include "Channel.hpp"
 #include"Client.hpp"
 #include"Tools.hpp"

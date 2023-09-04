@@ -27,13 +27,28 @@ Server::Server(int serverport, std::string password) {
         exit(-1);
     }
 
-    rc = ioctl(listen_sd, FIONBIO, reinterpret_cast<char *>(&on));
-    if (rc < 0) {
-        perror("ioctl() failed");
+// --------------------------------------------------------------------------------------------------------------------
+    // rc = ioctl(listen_sd, FIONBIO, reinterpret_cast<char *>(&on));
+    // if (rc < 0) {
+    //     perror("ioctl() failed");
+    //     close(listen_sd);
+    //     exit(-1);
+    // }
+
+    int flags = fcntl(listen_sd, F_GETFL, 0);
+    if (flags == -1) {
+        perror("fcntl(F_GETFL) failed");
         close(listen_sd);
         exit(-1);
     }
 
+    flags |= O_NONBLOCK;
+    if (fcntl(listen_sd, F_SETFL, flags) == -1) {
+        perror("fcntl(F_SETFL) failed");
+        close(listen_sd);
+        exit(-1);
+    }
+// --------------------------------------------------------------------------------------------------------------------
     memset(&addr, 0, sizeof(addr));
     addr.sin6_family = AF_INET6;
     memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
@@ -103,8 +118,13 @@ Server::Server(int serverport, std::string password) {
                 close_conn = 0;
                 
                 if (fds[i].revents & POLLIN) {
-                    memset(buffer.data(), 0, buffer.size());
-                    rc = recv(fds[i].fd, buffer.data(), buffer.size(), 0);
+// --------------------------------------------------------------------------------------------------------------------
+                    // memset(buffer.data(), 0, buffer.size());
+                    memset(const_cast<char*>(buffer.data()), 0, buffer.size());
+                    // rc = recv(fds[i].fd, buffer.data(), buffer.size(), 0);
+                    rc = recv(fds[i].fd, const_cast<char*>(buffer.data()), buffer.size(), 0);
+
+// --------------------------------------------------------------------------------------------------------------------
                     if (rc < 0) {
                         perror("recv() failed");
                         close_conn = 1;
