@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 19:23:49 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/04 13:46:11 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,10 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
         return ;
     if (channelsMap.find(receiveddata[1]) != channelsMap.end()) 
     {
-        if (channelsMap[receiveddata[1]].get_is_invite_only() && !usernickMap[sockfd].get_is_invited(receiveddata[1]))
+        if (channelsMap[receiveddata[1]].get_is_invite_only() && !usernickMap[sockfd].get_is_invited(receiveddata[1])){
             error(sockfd, "Channel is set to invites only!\n");
+            return ;
+        }
         if (channelsMap[receiveddata[1]].get_is_pwd_needed().empty() && receiveddata.size() != 2) 
             error(sockfd, "Error: Wrong number of arguments!\n");
         if (!channelsMap[receiveddata[1]].get_is_pwd_needed().empty() && receiveddata.size() < 3 && !channelsMap[receiveddata[1]].get_is_member(sockfd))

@@ -4,11 +4,11 @@
 Server::Server(int serverport, std::string password) {
     this->password = password;
     this->serverport = serverport;
-    int len, rc, on = 1;
+    int rc, on = 1;
     int listen_sd = -1, new_sd = -1;
     int end_server = 0, compress_array = 0;
     int close_conn;
-    std::string buffer(1024, '\0');
+    // std::string buffer(512, '\0');
     struct sockaddr_in6 addr;
     int timeout;
     struct pollfd fds[200];
@@ -117,38 +117,82 @@ Server::Server(int serverport, std::string password) {
             } else {
                 close_conn = 0;
                 
+                std::string holder;
                 if (fds[i].revents & POLLIN) {
-// --------------------------------------------------------------------------------------------------------------------
-                    // memset(buffer.data(), 0, buffer.size());
-                    memset(const_cast<char*>(buffer.data()), 0, buffer.size());
-                    // rc = recv(fds[i].fd, buffer.data(), buffer.size(), 0);
-                    rc = recv(fds[i].fd, const_cast<char*>(buffer.data()), buffer.size(), 0);
+                    int found_delimiter = 0;
 
-// --------------------------------------------------------------------------------------------------------------------
-                    if (rc < 0) {
-                        perror("recv() failed");
-                        close_conn = 1;
-                    } else if (rc == 0) {
-                        std::cout << "Connection closed" << std::endl;
-                        close_conn = 1;
-                    } 
-// --------------------------------------------------------------------------------------------------------------------
-                    else {
-                        len = rc;
-                        std::string data(buffer.data(), rc);
-                        data.resize(data.size() - 1);
-                        data[data.size()] = '\0';
-                        this->receiveddata = parsdata(data);
-                        if (this->receiveddata.empty())
-                            std::cout << "wrong args\n";
-                        else
-                        check_reg_and_cmds(this->receiveddata, fds[i].fd);
+                    while (!found_delimiter) {
+                        char recv_buffer[513];
+                        rc = recv(fds[i].fd, recv_buffer, sizeof(recv_buffer), 0);
+
+                        if (rc < 0) {
+                            if (errno != EWOULDBLOCK) {
+                                perror("recv() failed");
+                                close_conn = 1;
+                            }
+                            break;
+                        } else if (rc == 0) {
+                            std::cout << "Connection closed" << std::endl;
+                            close_conn = 1;
+                            break;
+                        } else {
+                            holder.append(recv_buffer, rc);
+
+                            size_t pos = holder.find_first_of("\r\n");
+                            if (pos != std::string::npos) {
+                                found_delimiter = 1;
+                                std::string data = holder.substr(0, pos);
+                                this->receiveddata = parsdata(data);
+                                if (this->receiveddata.empty())
+                                    std::cout << "wrong args\n";
+                                else
+                                    check_reg_and_cmds(this->receiveddata, fds[i].fd);
+                            }
+                        }
                     }
-// --------------------------------------------------------------------------------------------------------------------
                 }
+
+
+
+
+
+
+//                 if (fds[i].revents & POLLIN) {
+// // --------------------------------------------------------------------------------------------------------------------
+//                     // memset(buffer.data(), 0, buffer.size());
+//                     memset(const_cast<char*>(buffer.data()), 0, buffer.size());
+//                     // rc = recv(fds[i].fd, buffer.data(), buffer.size(), 0);
+//                     rc = recv(fds[i].fd, const_cast<char*>(buffer.data()), buffer.size(), 0);
+
+// // --------------------------------------------------------------------------------------------------------------------
+//                     if (rc < 0) {
+//                         perror("recv() failed");
+//                         close_conn = 1;
+//                     } else if (rc == 0) {
+//                         std::cout << "Connection closed" << std::endl;
+//                         close_conn = 1;
+//                     } 
+// // --------------------------------------------------------------------------------------------------------------------
+//                     else {
+//                         std::string holder;
+//                         std::string data(buffer.data(), rc);
+//                         size_t pos = data.find_first_of("\r\n");
+//                         std::cout << pos << "   " << data[pos - 1] << std::endl;
+//                         while (pos != std::string::npos)
+//                         len = rc;
+//                         data.resize(data.size() - 1);
+//                         data[data.size()] = '\0';
+//                         this->receiveddata = parsdata(data);
+//                         if (this->receiveddata.empty())
+//                             std::cout << "wrong args\n";
+//                         else
+//                         check_reg_and_cmds(this->receiveddata, fds[i].fd);
+//                     }
+// // --------------------------------------------------------------------------------------------------------------------
+//                 }
                 
                 if (fds[i].revents & POLLOUT) {
-                    rc = send(fds[i].fd, buffer.c_str(), len, 0);
+                    rc = send(fds[i].fd, holder.c_str(), holder.size(), 0);
                     if (rc < 0) {
                         perror("send() failed");
                         close_conn = 1;
