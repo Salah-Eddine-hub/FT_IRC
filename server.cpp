@@ -28,26 +28,26 @@ Server::Server(int serverport, std::string password) {
     }
 
 // --------------------------------------------------------------------------------------------------------------------
-    // rc = ioctl(listen_sd, FIONBIO, reinterpret_cast<char *>(&on));
-    // if (rc < 0) {
-    //     perror("ioctl() failed");
+    rc = ioctl(listen_sd, FIONBIO, reinterpret_cast<char *>(&on));
+    if (rc < 0) {
+        perror("ioctl() failed");
+        close(listen_sd);
+        exit(-1);
+    }
+
+    // int flags = fcntl(listen_sd, F_GETFL, 0);
+    // if (flags == -1) {
+    //     perror("fcntl(F_GETFL) failed");
     //     close(listen_sd);
     //     exit(-1);
     // }
 
-    int flags = fcntl(listen_sd, F_GETFL, 0);
-    if (flags == -1) {
-        perror("fcntl(F_GETFL) failed");
-        close(listen_sd);
-        exit(-1);
-    }
-
-    flags |= O_NONBLOCK;
-    if (fcntl(listen_sd, F_SETFL, flags) == -1) {
-        perror("fcntl(F_SETFL) failed");
-        close(listen_sd);
-        exit(-1);
-    }
+    // flags = O_NONBLOCK;
+    // if (fcntl(listen_sd, F_SETFL, flags) == -1) {
+    //     perror("fcntl(F_SETFL) failed");
+    //     close(listen_sd);
+    //     exit(-1);
+    // }
 // --------------------------------------------------------------------------------------------------------------------
     memset(&addr, 0, sizeof(addr));
     addr.sin6_family = AF_INET6;
@@ -86,9 +86,11 @@ Server::Server(int serverport, std::string password) {
             std::cout << "poll() timed out. End program." << std::endl;
             break;
         }
+        std::cout << "1\n";
 
         current_size = nfds;
         for (i = 0; i < current_size; i++) {
+                std::cout << "2\n";
             if (fds[i].revents == 0)
                 continue;
 
@@ -124,6 +126,9 @@ Server::Server(int serverport, std::string password) {
                     while (!found_delimiter) {
                         char recv_buffer[513];
                         rc = recv(fds[i].fd, recv_buffer, sizeof(recv_buffer), 0);
+                        
+                        std::cout << "rc: " << rc << std::endl;
+                        std::cout << "recv_buffer: '" << recv_buffer << "'" << std::endl;
 
                         if (rc < 0) {
                             if (errno != EWOULDBLOCK) {
@@ -136,9 +141,17 @@ Server::Server(int serverport, std::string password) {
                             close_conn = 1;
                             break;
                         } else {
+                            recv_buffer[rc] = '\0';
                             holder.append(recv_buffer, rc);
+                            bzero(recv_buffer, sizeof(recv_buffer));
 
-                            size_t pos = holder.find_first_of("\r\n");
+                            size_t pos = std::string::npos;
+                            if (holder.find("\r\n") != std::string::npos) {
+                                pos = holder.find("\r\n");
+                            }
+                            else if (holder.find("\n") != std::string::npos) {
+                                pos = holder.find("\n");
+                            }
                             if (pos != std::string::npos) {
                                 found_delimiter = 1;
                                 std::string data = holder.substr(0, pos);
@@ -151,9 +164,6 @@ Server::Server(int serverport, std::string password) {
                         }
                     }
                 }
-
-
-
 
 
 
@@ -174,7 +184,7 @@ Server::Server(int serverport, std::string password) {
 //                     } 
 // // --------------------------------------------------------------------------------------------------------------------
 //                     else {
-//                         std::string holder;
+//                         std::string holder;niyuzAzMfXCVfM0JX3fH3TBgfprA3A8T5PnyTtANvDUeAKY3N9pamoOTnu09oqD2nzw6RMQIH8VDGd0I41Tw9FUopNB1BR1v7Hg1vsrKwkcLdodsSSv5oKSoD1dY10stmM2J0BkfMu9i99w88RQgtozRDhvxGvBg9MLEtpo23b3LeNnBzvowZNOx3OmuiyaVuYwDGMuRy9jJ1Ukuc0kA2k3KUT8PxCa3rbOyAbo1m5NXj8q5WC7DLTmyMAtVECBsRaOPlEwuPyuVwGSezzaS8RKWzpKiquLc7QVL00wqX1qlHMnLLamsDZsCIq4ASS4a4ZWZ41aaDpxDyGDkeZ6UmdqruT2n02bdZ7zoK1YXz5bPXYm8TCgmHzxUU3zMSNYfMg14m4eHngG7zNfGZ7y4Q18Di5wb9tH6zuPPvgpL8ueqzbWi575hgD0uPUsl1pBa9lLjD7EBoNcfnszRvMdgNvLv7cl4Fvzvibyd8AXo7aJgHN0nDAD7FxN9aLDdKod9WUHio8JRe3lAY5xl96zQUipWbcGs0hfhylfZA5YRde9764h8XdoXftCTyKQ1nrCiBmBy7ninxIQYwFV6EAwfm6r1mSLDO6l5L465oYUpQppmqAK8aMMcuCHTRhoiBm1DQMzchMRr9RMCV9WUpXrogVPDaShMKajPuOVGgGBGXOdVVVse9rLxVR3AEhZSkVEcb5ESrZS8b1KKROPiuEMFERDeQiATG9TIqqU3KBeAkdiQFJnBsihpgqV8eLrz7NjadOcKsQQ6wwSm8AzyOvzH7VV2lNTVho5pUwdENW756PbKcfkYOywRYsEUDIzfLkyHAA5Zr2PXUCNCfbU7pi0lVOd8Gv26igMHrheYejZxnToUkTStLPiys73e8mBvbKR0E4W6Z650KeaCmRvXRUlew1vxLYmqXtMu1vcgF0fvrjWTxDeUpIYSUM7anoxoQtUqgIO1sa0snQibiyXjRUK66i4QnxiYpoljWS7mrUvfzgD9l13jKurSXeUxn1BWBcgW
 //                         std::string data(buffer.data(), rc);
 //                         size_t pos = data.find_first_of("\r\n");
 //                         std::cout << pos << "   " << data[pos - 1] << std::endl;
@@ -192,6 +202,7 @@ Server::Server(int serverport, std::string password) {
 //                 }
                 
                 if (fds[i].revents & POLLOUT) {
+                std::cout << "a\n";
                     rc = send(fds[i].fd, holder.c_str(), holder.size(), 0);
                     if (rc < 0) {
                         perror("send() failed");
