@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   part.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 16:46:03 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 19:10:32 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/05 20:02:22 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void Server::part(std::vector<std::string> receiveddata, int sockfd)
 {
     if(receiveddata.size() < 2) {
-        error(sockfd, "Error: Not enough parameters!\n");
+        error(sockfd, "irc_server 461 " + usernickMap[sockfd].get_nickname() + " PART :Not enough parameters\n");
         return ;
     }
     if(channelsMap.find(receiveddata[1]) != channelsMap.end()) {
@@ -24,6 +24,6 @@ void Server::part(std::vector<std::string> receiveddata, int sockfd)
             channelsMap[receiveddata[1]].remove_the_operator(sockfd);
     }
     else
-        error(sockfd, "Error: No such channel!\n");
+        error(sockfd, "irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :No such channel\n");
     return;
 }

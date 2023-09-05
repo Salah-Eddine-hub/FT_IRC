@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+         #
+#    By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/08/30 19:27:58 by iellyass         ###   ########.fr        #
+#    Updated: 2023/09/05 11:18:13 by iellyass         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,6 +29,8 @@ SRCS =	server.cpp\
 		kick.cpp\
 		topic.cpp\
 		part.cpp\
+		nick.cpp\
+		user.cpp\
 		check_reg_and_cmds.cpp\
 		Tools.cpp
 

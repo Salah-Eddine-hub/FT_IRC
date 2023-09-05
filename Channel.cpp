@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 18:02:55 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/05 19:06:15 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,14 +121,14 @@ void Channel::dec_current_users(){
 
 // ---------------------------------------------------------------
 
-void Channel::remove_the_user(int sockfd, std::string nickname)
+void Channel::remove_the_user(int sockfd, std::string nickname, std::string op)
 {
     std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
     
     if(it != membersMap.end()){
+        // success(sockfd, "irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n");
+        broadcast("irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n", -1);
         membersMap.erase(it);
-        success(sockfd, "You have been kicked from the channel:" + get_channel_name() + "!\n");
-        broadcast(nickname + " got kicked from the channel!\n", sockfd);
         this->dec_current_users();
     }
 }

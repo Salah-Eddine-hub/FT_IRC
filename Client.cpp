@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 17:44:07 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/05 16:42:07 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,19 @@ Client::Client() {
     this->pwdconf = 0;
     this->is_reg = 0;
     this->is_invited = 0;
+    this->username = "";
+    this->hostname = "";
+    this->servername = "";
+    this->realname = "";
+    this->nickname = "";
 }
 
 void Client::set_pwdconf(int pwdconf) {
     this->pwdconf = pwdconf;
 }
 
-void Client::inc_is_reg() {
-    this->is_reg++;
+void Client::set_is_reg(int i) {
+    this->is_reg = i;
 }
 
 void Client::set_is_invited(std::string channel_name) {

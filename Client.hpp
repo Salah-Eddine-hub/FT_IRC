@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:43:37 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 17:50:33 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/05 13:40:15 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Client
 
         
         void set_pwdconf(int pwdconf );
-        void inc_is_reg();
+        void set_is_reg(int i);
         void set_is_invited(std::string channel_name);
         void set_username(std::string username);
         void set_hostname(std::string hostname);

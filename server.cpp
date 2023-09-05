@@ -28,26 +28,26 @@ Server::Server(int serverport, std::string password) {
     }
 
 // --------------------------------------------------------------------------------------------------------------------
-    rc = ioctl(listen_sd, FIONBIO, reinterpret_cast<char *>(&on));
-    if (rc < 0) {
-        perror("ioctl() failed");
+    // rc = ioctl(listen_sd, FIONBIO, reinterpret_cast<char *>(&on));
+    // if (rc < 0) {
+    //     perror("ioctl() failed");
+    //     close(listen_sd);
+    //     exit(-1);
+    // }
+
+    int flags = fcntl(listen_sd, F_GETFL, 0);
+    if (flags == -1) {
+        perror("fcntl(F_GETFL) failed");
         close(listen_sd);
         exit(-1);
     }
 
-    // int flags = fcntl(listen_sd, F_GETFL, 0);
-    // if (flags == -1) {
-    //     perror("fcntl(F_GETFL) failed");
-    //     close(listen_sd);
-    //     exit(-1);
-    // }
-
-    // flags = O_NONBLOCK;
-    // if (fcntl(listen_sd, F_SETFL, flags) == -1) {
-    //     perror("fcntl(F_SETFL) failed");
-    //     close(listen_sd);
-    //     exit(-1);
-    // }
+    flags = O_NONBLOCK;
+    if (fcntl(listen_sd, F_SETFL, flags) == -1) {
+        perror("fcntl(F_SETFL) failed");
+        close(listen_sd);
+        exit(-1);
+    }
 // --------------------------------------------------------------------------------------------------------------------
     memset(&addr, 0, sizeof(addr));
     addr.sin6_family = AF_INET6;
@@ -86,16 +86,13 @@ Server::Server(int serverport, std::string password) {
             std::cout << "poll() timed out. End program." << std::endl;
             break;
         }
-        std::cout << "1\n";
 
         current_size = nfds;
         for (i = 0; i < current_size; i++) {
-                std::cout << "2\n";
             if (fds[i].revents == 0)
                 continue;
 
             if (fds[i].revents != POLLIN) {
-                std::cout << "Error! revents = " << fds[i].revents << std::endl;
                 end_server = 1;
                 break;
             }
@@ -126,10 +123,6 @@ Server::Server(int serverport, std::string password) {
                     while (!found_delimiter) {
                         char recv_buffer[513];
                         rc = recv(fds[i].fd, recv_buffer, sizeof(recv_buffer), 0);
-                        
-                        std::cout << "rc: " << rc << std::endl;
-                        std::cout << "recv_buffer: '" << recv_buffer << "'" << std::endl;
-
                         if (rc < 0) {
                             if (errno != EWOULDBLOCK) {
                                 perror("recv() failed");
@@ -202,7 +195,6 @@ Server::Server(int serverport, std::string password) {
 //                 }
                 
                 if (fds[i].revents & POLLOUT) {
-                std::cout << "a\n";
                     rc = send(fds[i].fd, holder.c_str(), holder.size(), 0);
                     if (rc < 0) {
                         perror("send() failed");
