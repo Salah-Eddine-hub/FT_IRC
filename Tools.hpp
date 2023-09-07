@@ -1,29 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   Tools.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/03 04:01:14 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/21 19:42:33 by iellyass         ###   ########.fr       */
+/*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
+/*   Updated: 2023/08/30 19:35:15 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#ifndef TOOLS_HPP
+#define TOOLS_HPP
+#include"iostream"
+#include <sys/socket.h>
 
-int main(int ac, char *av[]){
-	int port;
-	if (ac != 3){
-		std::cerr << "Wrong num of args" << std::endl;
-		return 0;
-	}
-	port = atoi(av[1]);
-	std::cout << port << std::endl;
-	if(!port){
-		std::cerr << "Error: uncorect port." << std::endl;
-		return 0;
-	}
-	Server server(port, av[2]);
-	return 0;
-}
+
+std::string strtolower(std::string str);
+int str_search(std::string str, char c);
+int is_num(std::string arg);
+void error(int sockfd, const std::string& message);
+void success(int sockfd, const std::string& message);
+
+#endif

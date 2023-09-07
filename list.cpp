@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   list.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:33:40 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 23:41:03 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/05 20:06:02 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include"server.hpp"
 
+//list + arg
 void Server::list(std::vector<std::string> receiveddata, int sockfd) {
 
     std::string msg;

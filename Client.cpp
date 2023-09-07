@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/18 22:48:31 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/06 14:02:12 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,28 @@
 Client::Client() {
     this->pwdconf = 0;
     this->is_reg = 0;
+    this->is_invited = 0;
+    this->username = "";
+    this->hostname = "";
+    this->servername = "";
+    this->realname = "";
+    this->nickname = "";
+    this->loginTimes = std::time(NULL);
 }
 
 void Client::set_pwdconf(int pwdconf) {
     this->pwdconf = pwdconf;
 }
 
-void Client::inc_is_reg() {
-    this->is_reg++;
+void Client::set_is_reg(int i) {
+    this->is_reg = i;
+}
+
+void Client::set_is_invited(std::string channel_name) {
+    std::vector<std::string>::iterator it = std::find(this->channelinvitedtoMap.begin(), this->channelinvitedtoMap.end(), channel_name);
+
+    if(it == this->channelinvitedtoMap.end())
+        this->channelinvitedtoMap.push_back(channel_name);
 }
 
 void Client::set_username(std::string username) {
@@ -53,6 +67,18 @@ const int& Client::get_pwdconf(){
 
 const int& Client::get_is_reg(){
     return (this->is_reg);
+}
+
+const std::time_t& Client::get_loginTimesg(){
+    return (this->loginTimes);
+}
+
+int Client::get_is_invited(std::string channel_name){
+    std::vector<std::string>::iterator it = std::find(this->channelinvitedtoMap.begin(), this->channelinvitedtoMap.end(), channel_name);
+
+    if(it != this->channelinvitedtoMap.end())
+        return 1;
+    return 0;
 }
 
 const std::string& Client::get_username(){

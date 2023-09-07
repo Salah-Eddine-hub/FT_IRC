@@ -1,60 +1,37 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   bot.cpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/19 12:46:54 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/24 13:25:30 by sharrach         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "server.hpp"
-#include <iostream>
 #include <chrono>
-#include <map>
-#include <string>
 
-std::map<std::string, std::chrono::time_point<std::chrono::system_clock>> loginTimes;
+// void Server::TrackTime(const std::string& username) {
+//     loginTimes[username] = std::time(NULL);
+//     std::cout << username << " logged in.\n";
+// }
 
-void TrackTime(const std::string& username) {
-    loginTimes[username] = std::chrono::system_clock::now();
-    std::cout << username << " logged in.\n";
-}
-
-void DisplayTime(const std::string& username) {
-    if (loginTimes.find(username) != loginTimes.end()) {
-        auto loginTime = loginTimes[username];
-        auto currentTime = std::chrono::system_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::minutes>(currentTime - loginTime);
-        std::cout << username << " has been logged in for " << duration.count() << " minutes.\n";
-    } else {
-        std::cout << "User " << username << " has not logged in.\n";
+void Server::DisplayTime(const std::string& username, int sockfd) {
+    
+    // std::map<int, Client>::iterator it = loginTimes.find(username);
+    if (username.empty())
+    {
+        error(sockfd, "wrong args.\n");
+        return ;
     }
-}
-
-int main() {
-    std::string command, username;
-
-    while (true) {
-        std::cout << "Enter command (login, display, quit): ";
-        std::cin >> command;
-
-        if (command == "login") {
-            std::cout << "Enter username: ";
-            std::cin >> username;
-            TrackTime(username);
-        } else if (command == "display") {
-            std::cout << "Enter username: ";
-            std::cin >> username;
-            DisplayTime(username);
-        } else if (command == "quit") {
-            break;
-        } else {
-            std::cout << "Invalid command. Available commands: login, display, quit\n";
-        }
+    if (usernickMap.find(get_sockfd(username)) != usernickMap.end()) {
+        std::time_t loginTime = usernickMap[sockfd].get_loginTimesg();
+        std::cout << "loginTime time " <<  loginTime  << std::endl;
+        std::time_t currentTime = std::time(NULL);
+        std::cout << "here " <<  currentTime << std::endl;
+        std::time_t duration = currentTime - loginTime;
+        std::cout << "here2 " << duration << std::endl;
+        int minutes = static_cast<int>(duration / 60);
+        std::cout << minutes << std::endl;
+        std::stringstream ss;
+        std::string str_min;
+        ss << minutes;
+        ss >> str_min;
+        success(sockfd, username + " has been logged in for " +  str_min + " minutes.\n");
+        // std::cout << username << " has been logged in for " << minutes << " minutes.\n";
     }
-
-    return 0;
+    else {
+        error(sockfd, "User " + username + " not found.\n");
+    }
 }
