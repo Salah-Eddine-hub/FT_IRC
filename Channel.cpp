@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/06 15:06:05 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/07 19:15:59 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,18 +127,18 @@ void Channel::remove_the_user(int sockfd, std::string nickname, std::string op)
     
     if(it != membersMap.end()){
         // success(sockfd, "irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n");
-        broadcast("irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n", -1);
+        broadcast(':' + op + "!irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n", -1);
         membersMap.erase(it);
         this->dec_current_users();
     }
 }
 
-void Channel::leave_the_channel(int sockfd, std::string nickname)
+void Channel::leave_the_channel(int sockfd, std::string nickname, std::string chnnelname)
 {
     std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
     
     if(it != membersMap.end()){
-        broadcast(':' + nickname + "!irc_server PART " + this->get_channel_name() + "\n", -1);
+        broadcast(':' + nickname + "!irc_server PART " + chnnelname + "\n", -1);
         membersMap.erase(it);
         // broadcast(nickname + " left the channel: " + get_channel_name() + "\n", sockfd);
         this->dec_current_users();

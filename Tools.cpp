@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Tools.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 19:26:10 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/07 15:31:58 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,15 @@
 std::string strtolower(std::string str) {
     for (size_t i = 0; i < str.size(); ++i)
         str[i] = tolower(str[i]);
+    return str;
+}
+
+std::string int_to_string(int nb) {
+    std::stringstream ss;
+    std::string str;
+
+    ss << nb;
+    ss >> str;
     return str;
 }
 

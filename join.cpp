@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/05 17:24:34 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/07 19:18:10 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
         channelsMap[receiveddata[1]] = Channel(receiveddata[1]);
         channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
         channelsMap[receiveddata[1]].set_is_operator(sockfd);
+        std::cout << channelsMap[receiveddata[1]].get_channel_name() << "----------------" << receiveddata[1] << "----------------\n";
     }
     
     return ;

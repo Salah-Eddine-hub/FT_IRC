@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/05 19:03:40 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/07 19:16:05 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class Channel
 
         void broadcast(const std::string& message, int excludingSocket);
 		void remove_the_user(int sockfd, std::string nickname, std::string op);
-		void leave_the_channel(int sockfd, std::string nickname);
+		void leave_the_channel(int sockfd, std::string nickname, std::string chnnelname);
 		void remove_the_operator(int sockfd);
 
         const std::string& get_channel_topic();

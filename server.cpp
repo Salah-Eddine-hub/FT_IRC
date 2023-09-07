@@ -235,6 +235,8 @@ int Server::get_sockfd(std::string usernickname){
     for (it = usernickMap.begin(); it != usernickMap.end(); it++){
         if(it->second.get_nickname() == usernickname)
             return it->first;
+        else if(strtolower(it->second.get_nickname()) == strtolower(usernickname))
+            return it->first;
     }
     return -1;    
 }
