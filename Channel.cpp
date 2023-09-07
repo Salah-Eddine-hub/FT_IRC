@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/05 19:06:15 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/06 15:06:05 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,11 +138,13 @@ void Channel::leave_the_channel(int sockfd, std::string nickname)
     std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
     
     if(it != membersMap.end()){
+        broadcast(':' + nickname + "!irc_server PART " + this->get_channel_name() + "\n", -1);
         membersMap.erase(it);
-        success(sockfd, "You left the channel:" + get_channel_name() + "\n");
-        broadcast(nickname + " left the channel: " + get_channel_name() + "\n", sockfd);
+        // broadcast(nickname + " left the channel: " + get_channel_name() + "\n", sockfd);
         this->dec_current_users();
     }
+    else
+        error(sockfd, ":irc_server 442 " + nickname + ' ' + this->get_channel_name() + " :You're not on that channel\n");
 }
 
 void Channel::remove_the_operator(int sockfd)

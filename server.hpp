@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/05 17:37:43 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/06 14:46:26 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,13 @@
 #include <sstream>
 #include <fcntl.h>
 #include <vector>
-// #include <bits/stdc++.h>
 #include "Channel.hpp"
 #include"Client.hpp"
 #include"Tools.hpp"
 
 class Client;
 
-class Server{
+class Server {
 	public:
 		Server(int serverport, std::string pass);
 		~Server();
@@ -65,7 +64,6 @@ class Server{
 		int is_valide_nickname(std::string &nickname, int sockfd);
 		void exec_cmds(std::vector<std::string> receiveddata, int sockfd);
 		int get_sockfd(std::string usernickname);
-		int all_cmds(std::vector<std::string> receiveddata, int sockfd);
 
 	private:
 		std::map<int, Client> usernickMap;

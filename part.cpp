@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 16:46:03 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/05 20:02:22 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/06 15:40:43 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void Server::part(std::vector<std::string> receiveddata, int sockfd)
         channelsMap[receiveddata[1]].leave_the_channel(sockfd, usernickMap[sockfd].get_nickname());
         if (channelsMap[receiveddata[1]].get_is_operator(sockfd))
             channelsMap[receiveddata[1]].remove_the_operator(sockfd);
+        if (channelsMap[receiveddata[1]].get_current_users() == 0)
+            channelsMap.erase(receiveddata[1]);
     }
     else
         error(sockfd, "irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :No such channel\n");

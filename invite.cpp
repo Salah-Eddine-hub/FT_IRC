@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 15:34:15 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 18:21:11 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/06 16:17:28 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,26 +16,29 @@ void Server::invite(std::vector<std::string> receiveddata, int sockfd)
 {
 
     if(receiveddata.size() < 3)
-        error(sockfd, "Error: wrong arguments!\n");
-    else if(channelsMap.find(receiveddata[2]) != channelsMap.end() )
+        error(sockfd, ":irc_server 461 " + usernickMap[sockfd].get_nickname() + " INVITE :Not enough parameters\n");
+    
+    else if(usernickMap.find(get_sockfd(receiveddata[1])) != usernickMap.end() )
     {
-        if(!channelsMap[receiveddata[2]].get_is_member(sockfd)) 
-            error(sockfd, "Error: You are not a member of the channel!\n");
-        else if (!channelsMap[receiveddata[2]].get_is_operator(sockfd))
-            error(sockfd, "Error: You are not an OP in this channel!\n");
+        if (channelsMap.find(receiveddata[2]) == channelsMap.end())
+            error(sockfd, ":irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[2] + " :No such channel\n");
+        else if(!channelsMap[receiveddata[2]].get_is_member(sockfd)) 
+            error(sockfd, ":irc_server 442 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[2] + " :You're not on that channel\n");
         else 
         {
-            if (usernickMap.find(get_sockfd(receiveddata[1])) == usernickMap.end())
-                error(sockfd, "Error: User not found!\n");
-            else if (channelsMap[receiveddata[2]].get_is_member(get_sockfd(receiveddata[1])))
-                error(sockfd, "Error: " + receiveddata[1] + " already a member of this channel!\n");
+            if (channelsMap[receiveddata[2]].get_is_member(get_sockfd(receiveddata[1])))
+                error(sockfd, ":irc_server 443 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + ' ' + receiveddata[2] + " :is already on channel\n");
+            else if (!channelsMap[receiveddata[2]].get_is_operator(sockfd))
+                error(sockfd, ":irc_server 482 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[2] + " :You're not channel operator\n");
             else {
                 usernickMap[get_sockfd(receiveddata[1])].set_is_invited(receiveddata[2]);
-                success(get_sockfd(receiveddata[1]), usernickMap[sockfd].get_nickname() + " invited you to join " + receiveddata[2] + "!\n");
+                success(get_sockfd(receiveddata[1]), ":ha1!irc_server INVITE " + receiveddata[1] + " :" + receiveddata[2] + "\n");
+                success(sockfd, ":irc_server 341 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + ' ' + receiveddata[2] + "\n");
+                success(sockfd, ":irc_server NOTICE @" + receiveddata[2] + " :" + usernickMap[sockfd].get_nickname() + " invited " + receiveddata[1] + " into channel " + receiveddata[2] + " \n");
             }
         }
     }
     else
-        error(sockfd, "Error: Channel not found!\n");
+        error(sockfd, ":irc_server 401 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[2] + " :No such nick/channel\n");
     return;
 }
