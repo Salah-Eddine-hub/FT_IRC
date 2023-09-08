@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/08 12:26:56 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/08 19:10:33 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,13 +126,12 @@ void Channel::dec_current_users(){
 
 // ---------------------------------------------------------------
 
-void Channel::remove_the_user(int sockfd, std::string nickname, std::string op)
+void Channel::remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op)
 {
     std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
     
     if(it != membersMap.end()){
-        // success(sockfd, "irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n");
-        broadcast(':' + op + "!localhost KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n", -1);
+        broadcast(':' + op + "!localhost KICK " + channel_name + ' ' + nickname + " :" + op + "\n", -1);
         membersMap.erase(it);
         this->dec_current_users();
     }
@@ -170,19 +169,28 @@ void Channel::broadcast(const std::string& message, int excludingsockfd) {
         }
 }
 
-void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name){
+void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name, std::map<int, Client>& usernickMap){
 
     std::vector<int>::iterator it = std::find(this->membersMap.begin(), this->membersMap.end(), sockfd);
     if(it != this->membersMap.end())
-        error(sockfd, "You are already a member of this channel!\n");
+        return ;
     else if(this->get_limit() > 0 && (this->get_limit() <= this->get_current_users()))
-        error(sockfd, "Error: user limit for the channel has been reached!\n");
+        error(sockfd, ":punch.wa.us.dal.net 471 " + usernickMap[sockfd].get_nickname() + this->get_original_channel_name() + " :Cannot join channel (+l)\n");
     else{
-        std::string msg = nickname + " just joind the channel!\n";
-        broadcast(msg, sockfd);
-        msg = "You joind the channel " + channel_name + '\n';
-        success(sockfd, msg);
+
         this->membersMap.push_back(sockfd);
+        std::cout << channel_name << "----------------------------\n";
+        std::string users;
+        for (size_t i = membersMap.size() - 1;  i > 0; i--)
+        {
+            users += usernickMap[membersMap[i]].get_nickname() + " ";
+        }
+        
+        success(sockfd, ':' + nickname + "!localhost JOIN :" + channel_name + "\n");
+        success(sockfd, ":irc_server 353 " + nickname + " = " + this->get_original_channel_name() + " :" + users + '@' + usernickMap[membersMap[0]].get_nickname() + "\n");
+        success(sockfd, ":irc_server 366 " + nickname + ' ' + channel_name + " :End of /NAMES list.\n");
+        std::string msg = ':' + nickname + "!localhost JOIN :" + channel_name + '\n';
+        broadcast(msg, sockfd);
         this->inc_current_users();
     }
     return ;

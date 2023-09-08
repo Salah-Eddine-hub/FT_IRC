@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/06 14:46:26 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/08 16:01:06 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class Server {
 
 		int is_valide_name(std::string channel_name, int sockfd);
 		int is_valide_nickname(std::string &nickname, int sockfd);
+		int is_valide_username(std::string nickname);
 		void exec_cmds(std::vector<std::string> receiveddata, int sockfd);
 		int get_sockfd(std::string usernickname);
 

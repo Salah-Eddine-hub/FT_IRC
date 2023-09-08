@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/27 12:46:30 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 19:22:32 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/08 19:36:51 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,61 +22,77 @@ void Server::mode(std::vector<std::string> receiveddata, int sockfd)
     }   
     
     if(channelsMap.find(receiveddata[1]) != channelsMap.end()) {
-        if(!channelsMap[receiveddata[1]].get_is_member(sockfd)){
-            error(sockfd, "Error: You are not a member of the channel!\n");
-            return ;
-        }
+        // if(!channelsMap[receiveddata[1]].get_is_member(sockfd)){
+        //     error(sockfd, "Error: You are not a member of the channel!\n");
+        //     return ;
+        // }
         if (!channelsMap[receiveddata[1]].get_is_operator(sockfd)) {
-            error(sockfd, "Error: You are not an OP in this channel!\n");
+            error(sockfd, ":irc_server 482 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :You're not channel operator\n");
             return ;
         }
             if(receiveddata[2] == "+i") {
                 channelsMap[receiveddata[1]].set_is_invite_only(1);
-                channelsMap[receiveddata[1]].broadcast(receiveddata[1] + " sets to invites only!\n" , -1);
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost MODE " + channelsMap[receiveddata[1]].get_original_channel_name() +" +i\n", -1);
             }
             else if(receiveddata[2] == "-i") {
                 channelsMap[receiveddata[1]].set_is_invite_only(0);
-                channelsMap[receiveddata[1]].broadcast(receiveddata[1] + " is open for everyone to join!\n" , -1);
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost MODE " + channelsMap[receiveddata[1]].get_original_channel_name() +" -i\n", -1);
             }
             else if(receiveddata[2] == "+t") {
                 channelsMap[receiveddata[1]].set_is_topic_restricted(1);
-                channelsMap[receiveddata[1]].broadcast(receiveddata[1] + ": topic is restricted to only the channel's OPS!\n" , -1);
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost MODE " + channelsMap[receiveddata[1]].get_original_channel_name() +" +t\n", -1);
             }
             else if(receiveddata[2] == "-t") {
                 channelsMap[receiveddata[1]].set_is_topic_restricted(0);
-                channelsMap[receiveddata[1]].broadcast(receiveddata[1] + ": topic can be set by everyone!\n" , -1);
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost MODE " + channelsMap[receiveddata[1]].get_original_channel_name() +" -t\n", -1);
             }
             else if(receiveddata[2] == "-k") {
                 if (receiveddata.size() > 3){
+                    channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost MODE " + channelsMap[receiveddata[1]].get_original_channel_name() +" +k " + channelsMap[receiveddata[1]].get_is_pwd_needed() + '\n', -1);
                     channelsMap[receiveddata[1]].set_is_pwd_needed("");
-                    channelsMap[receiveddata[1]].broadcast(receiveddata[1] + ": Users can join the channel without providing any password!\n" , -1);
                 }
             }
             else if(receiveddata[2] == "-l") {
                 channelsMap[receiveddata[1]].set_limit(0);
-                channelsMap[receiveddata[1]].broadcast(receiveddata[1] + ": No user limit has been set to this channel!\n" , -1);
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost MODE " + channelsMap[receiveddata[1]].get_original_channel_name() +" -l\n", -1);
             }
             else if(receiveddata[2] == "+o") {
                 if (channelsMap[receiveddata[1]].get_is_member(sockfd)){
                     channelsMap[receiveddata[1]].set_is_operator(get_sockfd(receiveddata[3]));
-                    channelsMap[receiveddata[1]].broadcast(receiveddata[3] + " is now an operator in this channel!\n" , -1);
+                    channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!irc_server MODE " + channelsMap[receiveddata[1]].get_original_channel_name() + " +o " + receiveddata[3] + '\n', -1);
                 }
-                else
-                    error(sockfd, receiveddata[3] + " is not a member to this channel!\n");
+                else{
+                    if(usernickMap.find(get_sockfd(receiveddata[3])) != usernickMap.end()) {
+                        error(sockfd, receiveddata[3] + ":irc_server 401 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[3] + " :No such nick/channel\n");
+                        error(sockfd, receiveddata[3] + ":irc_server 441 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[3] + channelsMap[receiveddata[1]].get_original_channel_name() + " :They aren't on that channel\n");
+                    }
+                    else if (channelsMap.find(receiveddata[2]) == channelsMap.end())
+                        error(sockfd, ":irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :No such channel\n");
+                    else
+                        error(sockfd, receiveddata[3] + ":irc_server 441 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[3] + channelsMap[receiveddata[1]].get_original_channel_name() + " :They aren't on that channel\n");
+                }
             }
             else if(receiveddata[2] == "-o") {
                 if (channelsMap[receiveddata[1]].get_is_member(sockfd)){
                     channelsMap[receiveddata[1]].remove_the_operator(get_sockfd(receiveddata[3]));
                     channelsMap[receiveddata[1]].broadcast(receiveddata[3] + " is not an operator in this channel anymore!\n" , -1);
                 }
-                else
-                    error(sockfd, receiveddata[3] + " is not a member to this channel!\n");
+                else{
+                    if(usernickMap.find(get_sockfd(receiveddata[3])) != usernickMap.end()) {
+                        error(sockfd, receiveddata[3] + ":irc_server 401 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[3] + " :No such nick/channel\n");
+                        error(sockfd, receiveddata[3] + ":irc_server 441 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[3] + channelsMap[receiveddata[1]].get_original_channel_name() + " :They aren't on that channel\n");
+                    }
+                    else if (channelsMap.find(receiveddata[2]) == channelsMap.end())
+                        error(sockfd, ":irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :No such channel\n");
+                    else
+                        error(sockfd, receiveddata[3] + ":irc_server 441 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[3] + channelsMap[receiveddata[1]].get_original_channel_name() + " :They aren't on that channel\n");
+                }
             }
             if(receiveddata[2] == "+k" && receiveddata.size() > 3) {
                 if(receiveddata[3].size() > 23)
                     receiveddata[3].resize(23);
                 channelsMap[receiveddata[1]].set_is_pwd_needed(receiveddata[3]);
-                channelsMap[receiveddata[1]].broadcast(receiveddata[1] + ": Users need to provide the correct password to join the channel!\n", -1);
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost MODE " + channelsMap[receiveddata[1]].get_original_channel_name() +" +k " + receiveddata[3] + '\n', -1);
             }
             else if(receiveddata[2] == "+l") {
                 std::stringstream ss;
