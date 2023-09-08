@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/07 19:15:59 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/08 12:26:56 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ Channel::Channel() {
 }
 
 Channel::Channel(std::string channel_name) {
-    this->channel_name = channel_name;
+    this->original_channel_name = channel_name;
+    this->channel_name = strtolower(channel_name);
     this->is_invite_only = 0;
     this->is_topic_restricted = 0;
     this->is_pwd_needed = "";
@@ -39,6 +40,10 @@ Channel::~Channel() {}
 
 const std::string& Channel::get_channel_name(){
     return (this->channel_name);
+}
+
+const std::string& Channel::get_original_channel_name(){
+    return (this->original_channel_name);
 }
 
 const std::string& Channel::get_channel_topic(){
@@ -127,7 +132,7 @@ void Channel::remove_the_user(int sockfd, std::string nickname, std::string op)
     
     if(it != membersMap.end()){
         // success(sockfd, "irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n");
-        broadcast(':' + op + "!irc_serever KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n", -1);
+        broadcast(':' + op + "!localhost KICK " + get_channel_name() + ' ' + nickname + " :" + op + "\n", -1);
         membersMap.erase(it);
         this->dec_current_users();
     }

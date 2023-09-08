@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/07 19:18:10 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/08 11:31:27 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
         error(sockfd, "Error: Syntax error!\n");
         return ;
     }
-    receiveddata[1] = strtolower(receiveddata[1]);
     if(!is_valide_name(receiveddata[1], sockfd))
         return ;
-    if (channelsMap.find(receiveddata[1]) != channelsMap.end()) 
+    if (channelsMap.find(strtolower(receiveddata[1])) != channelsMap.end()) 
     {
+        receiveddata[1] = strtolower(receiveddata[1]);
         if (channelsMap[receiveddata[1]].get_is_invite_only() && !usernickMap[sockfd].get_is_invited(receiveddata[1])){
             error(sockfd, "Channel is set to invites only!\n");
             return ;
@@ -64,11 +64,10 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
     else {
         error(sockfd, "Channel not found!\n");
         success(sockfd, "Success: channel created successfully!\n");
-        channelsMap[receiveddata[1]] = Channel(receiveddata[1]);
-        channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
-        channelsMap[receiveddata[1]].set_is_operator(sockfd);
-        std::cout << channelsMap[receiveddata[1]].get_channel_name() << "----------------" << receiveddata[1] << "----------------\n";
+        channelsMap[strtolower(receiveddata[1])] = Channel(receiveddata[1]);
+        channelsMap[strtolower(receiveddata[1])].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1]);
+        channelsMap[strtolower(receiveddata[1])].set_is_operator(sockfd);
+        std::cout << channelsMap[strtolower(receiveddata[1])].get_channel_name() << "----------------" << channelsMap[strtolower(receiveddata[1])].get_original_channel_name() << "----------------\n";
     }
-    
     return ;
 }

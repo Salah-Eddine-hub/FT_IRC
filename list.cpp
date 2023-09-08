@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:33:40 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/07 15:45:56 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/08 11:38:03 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ void Server::list(std::vector<std::string> receiveddata, int sockfd) {
         for (it = channelsMap.begin(); it != channelsMap.end(); ++it) {
             std::cout << "channelsMap[it->first].get_current_users(); " << channelsMap[it->first].get_current_users() << " channelsMap[it->first]: " << it->first << std::endl;
             if (!channelsMap[it->first].get_channel_topic().empty())
-                msg = ":irc_server 322 " + usernickMap[sockfd].get_nickname() + ' ' + it->first + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :" + channelsMap[it->first].get_channel_topic()+ '\n';
+                msg = ":irc_server 322 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[it->first].get_original_channel_name() + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :" + channelsMap[it->first].get_channel_topic()+ '\n';
             else 
-                msg = ":irc_server 322 " + usernickMap[sockfd].get_nickname() + ' ' + it->first + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :\n";
+                msg = ":irc_server 322 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[it->first].get_original_channel_name() + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :\n";
             success(sockfd, msg);
         }
     }

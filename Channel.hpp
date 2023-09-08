@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/07 19:16:05 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/08 11:31:03 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ class Channel
 		std::vector<int> membersMap;
         std::vector<int> opsMap;
         std::string channel_name;
+        std::string original_channel_name;
         std::string channel_topic;
         std::string is_pwd_needed;
         int is_topic_restricted;
@@ -41,6 +42,7 @@ class Channel
 
         const std::string& get_channel_topic();
         const std::string& get_channel_name();
+        const std::string& get_original_channel_name();
         int get_is_member(int sockfd);
         int get_is_invite_only();
         int get_is_topic_restricted();
