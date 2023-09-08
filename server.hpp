@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/06 12:51:57 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/08 11:14:40 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,5 +78,19 @@ class Server{
 		std::vector<std::string> receiveddata;
 		int serverport;
 		std::string password;
+		struct sockaddr_in6 addr;
+		struct pollfd fds[200];
+		int rc;
+		int on;
+		int listen_sd;
+		int new_sd;
+		int end_server;
+		int compress_array;
+		int close_conn;
+		int timeout;
+		int nfds;
+		int current_size;
+		int j;
+		int i;
 };
 #endif

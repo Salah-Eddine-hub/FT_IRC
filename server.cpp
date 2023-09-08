@@ -4,15 +4,14 @@
 Server::Server(int serverport, std::string password) {
     this->password = password;
     this->serverport = serverport;
-    int rc, on = 1;
-    int listen_sd = -1, new_sd = -1;
-    int end_server = 0, compress_array = 0;
-    int close_conn;
+    on = 1;
+    listen_sd = -1;
+    new_sd = -1;
+    end_server = 0;
+    compress_array = 0;
     // std::string buffer(512, '\0');
-    struct sockaddr_in6 addr;
-    int timeout;
-    struct pollfd fds[200];
-    int nfds = 1, current_size = 0, i, j;
+    nfds = 1, 
+    current_size = 0;
 
     listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
     if (listen_sd < 0) {
@@ -72,7 +71,8 @@ Server::Server(int serverport, std::string password) {
     fds[0].fd = listen_sd;
     fds[0].events = POLLIN;
     timeout = 30000 * 30000;
-
+    std::cout << ":punch.wa.us.dal.net NOTICE AUTH :*** Looking up your hostname..." << std::endl;
+    std::cout << ":punch.wa.us.dal.net NOTICE AUTH :*** Found your hostname" << std::endl;
     while (end_server == 0){
         std::cout << "Waiting on poll()..." << std::endl;
         rc = poll(fds, nfds, timeout);
