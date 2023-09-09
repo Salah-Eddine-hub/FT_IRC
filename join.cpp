@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/08 19:06:51 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/09 15:34:43 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
     {
         std::string tmpreceiveddata1 = receiveddata[1];
         receiveddata[1] = strtolower(receiveddata[1]);
-        if (channelsMap[receiveddata[1]].get_is_invite_only() && !usernickMap[sockfd].get_is_invited(receiveddata[1])){
+        if (!channelsMap[receiveddata[1]].get_is_member(sockfd) && channelsMap[receiveddata[1]].get_is_invite_only() && !usernickMap[sockfd].get_is_invited(receiveddata[1])){
             error(sockfd, ":irc_server 473 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :Cannot join channel (+i)\n");
             return ;
         }

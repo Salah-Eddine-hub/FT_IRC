@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/08 19:10:33 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/09 15:26:58 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void Channel::leave_the_channel(int sockfd, std::string nickname, std::string ch
         this->dec_current_users();
     }
     else
-        error(sockfd, ":irc_server 442 " + nickname + ' ' + this->get_channel_name() + " :You're not on that channel\n");
+        error(sockfd, ":irc_server 442 " + nickname + ' ' + chnnelname + " :You're not on that channel\n");
 }
 
 void Channel::remove_the_operator(int sockfd)
