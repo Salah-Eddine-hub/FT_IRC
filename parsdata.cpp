@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include"server.hpp"
-\
+
 std::vector<std::string> Server::parsdata(std::string receiveddata) {
     std::vector<std::string> tokens;
     std::string word;
