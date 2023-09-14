@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:09:18 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/14 14:02:57 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 18:08:50 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Server::Server(int serverport, std::string password) {
 	nfds = 1, 
 	current_size = 0;
 
-	listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
+	listen_sd = socket(AF_INET, SOCK_STREAM, 0);
 	if (listen_sd < 0) {
 		perror("socket() failed");
 		exit(-1);
@@ -59,9 +59,9 @@ Server::Server(int serverport, std::string password) {
 // --------------------------------------------------------------------------------------------------------------------
 
 	memset(&addr, 0, sizeof(addr));
-	addr.sin6_family = AF_INET6;
-	memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
-	addr.sin6_port = htons(serverport);
+	addr.sin_family = AF_INET;
+	// memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
+	addr.sin_port = htons(serverport);
 	rc = bind(listen_sd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
 	if (rc < 0) {
 		perror("bind() failed");
@@ -96,7 +96,7 @@ Server::Server(int serverport, std::string password) {
 		}
 		else if (fds[0].revents == POLLIN)
 		{
-			std::cout << "newclient\n";
+			// std::cout << "newclient\n";
 			new_sd = accept(listen_sd, NULL, NULL);
 			if (new_sd < 0) {
 				if (errno != EWOULDBLOCK) {
@@ -105,6 +105,8 @@ Server::Server(int serverport, std::string password) {
 				}
 				break;
 			}
+			std::string clientIP = ClientIp(new_sd);
+			std::cout << "New client connected from IP: " << clientIP << std::endl;
 			usernickMap[new_sd] = Client();
 
 			std::cout << nfds << "\n";
@@ -198,40 +200,52 @@ Server::Server(int serverport, std::string password) {
 	}
 }
 
+std::string Server::ClientIp(int client) {
+	struct sockaddr_in clientAddr;
+	socklen_t addrLen = sizeof(clientAddr);
+
+	if (getpeername(client, (struct sockaddr*)&clientAddr, &addrLen) == 0) {
+		return inet_ntoa(clientAddr.sin_addr);
+	} else {
+		perror("getpeername() failed");
+		return 0;
+	}
+}
+
 int Server::get_sockfd(std::string usernickname){
 	std::map<int, Client>::iterator it;
 	for (it = usernickMap.begin(); it != usernickMap.end(); it++){
 		if(it->second.get_nickname() == usernickname)
 			return it->first;
 	}
-	return -1;    
+	return -1;
 }
 
 std::map<std::string, std::string> Server::get_channel_and_key(const std::vector<std::string>& receiveddata) {
-    std::map<std::string, std::string> channelAndkey;
+	std::map<std::string, std::string> channelAndkey;
 
-    if (receiveddata.size() == 2) {
-        std::istringstream schannel(receiveddata[1]);
+	if (receiveddata.size() == 2) {
+		std::istringstream schannel(receiveddata[1]);
 
-        std::string channel;
+		std::string channel;
 
-        while (std::getline(schannel, channel, ','))
-                channelAndkey[channel] = "";
-    }
-    else if (receiveddata.size() >= 3) {
-        std::istringstream schannel(receiveddata[1]);
-        std::istringstream skey(receiveddata[2]);
+		while (std::getline(schannel, channel, ','))
+				channelAndkey[channel] = "";
+	}
+	else if (receiveddata.size() >= 3) {
+		std::istringstream schannel(receiveddata[1]);
+		std::istringstream skey(receiveddata[2]);
 
-        std::string channel;
-        std::string key;
+		std::string channel;
+		std::string key;
 
-        while (std::getline(schannel, channel, ',')) {
-            if (std::getline(skey, key, ','))
-                channelAndkey[channel] = key;
-            else
-                channelAndkey[channel] = "";
-        }
-    }
+		while (std::getline(schannel, channel, ',')) {
+			if (std::getline(skey, key, ','))
+				channelAndkey[channel] = key;
+			else
+				channelAndkey[channel] = "";
+		}
+	}
 	return channelAndkey;
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/14 13:07:40 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 15:53:55 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std
     if(it != this->membersMap.end())
         return ;
     else if(this->get_limit() > 0 && (this->get_limit() <= this->get_current_users()))
-        inv_mssg(sockfd, ":punch.wa.us.dal.net 471 " + usernickMap[sockfd].get_nickname() + this->get_original_channel_name() + " :Cannot join channel (+l)\n");
+        inv_mssg(sockfd, ":irc_server 471 " + usernickMap[sockfd].get_nickname() + ' ' + this->get_original_channel_name() + " :Cannot join channel (+l)\n");
     else{
 
         this->membersMap.push_back(sockfd);

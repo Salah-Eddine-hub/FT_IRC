@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+         #
+#    By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/09/14 13:01:17 by iellyass         ###   ########.fr        #
+#    Updated: 2023/09/14 18:04:54 by sharrach         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ SRCS =	server.cpp\
 
 CC =	c++
 
-CPPFLAGS =	-Wall -Wextra -Werror -std=c++98
+CPPFLAGS =	-Wall -Wextra -Werror -std=c++98 -fsanitize=address
 
 OBJS =	$(SRCS:.cpp=.o)
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsdata.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:06:54 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/12 13:51:30 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 15:37:47 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ std::vector<std::string> Server::parsdata(std::string receiveddata) {
                 i++;
             }
             tokens.push_back(word);
+            break;
         }
         if(receiveddata[i] != ':')
         {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/14 13:01:19 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 18:06:25 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@
 #include"Client.hpp"
 #include"Tools.hpp"
 
+
+#include <arpa/inet.h>
+
 class Client;
 
 class Server {
@@ -67,8 +70,10 @@ class Server {
 		int get_sockfd(std::string usernickname);
 		std::map<std::string, std::string> get_channel_and_key(const std::vector<std::string>& receiveddata);
 
-		void TrackTime(const std::string& username);
-		void DisplayTime(const std::string& username, int sockfd);
+		// void TrackTime(const std::string& username);
+		void DisplayTime(const std::string username, int sockfd);
+
+		std::string ClientIp(int client);
 	
 	private:
 		std::map<int, Client> usernickMap;
@@ -77,7 +82,7 @@ class Server {
 		std::vector<std::string> receiveddata;
 		int serverport;
 		std::string password;
-		struct sockaddr_in6 addr;
+		struct sockaddr_in addr;
 		struct pollfd fds[200];
 		int rc;
 		int on;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/14 13:09:07 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 15:44:42 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,9 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
     for (std::map<std::string, std::string>::iterator it = channelAndkey.begin(); it != channelAndkey.end(); it++)
     {
         receiveddata[1] = it->first;
-        if (receiveddata[1].size() < 2 || !is_valide_name(receiveddata[1])) {
-            inv_mssg(sockfd, ":irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :No such channel\n");
-            return ;
-        }
-        if (channelsMap.find(strtolower(receiveddata[1])) != channelsMap.end()) 
+        if (receiveddata[1].size() < 2 || !is_valide_name(receiveddata[1]))
+            inv_mssg(sockfd, ":irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :No such channel\n");\
+        else if (channelsMap.find(strtolower(receiveddata[1])) != channelsMap.end()) 
         {
             std::string tmpreceiveddata1 = receiveddata[1];
             receiveddata[1] = strtolower(receiveddata[1]);
