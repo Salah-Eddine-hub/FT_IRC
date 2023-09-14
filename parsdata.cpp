@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsdata.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hel-makh <hel-makh@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:06:54 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/04 20:26:387 by hel-makh         ###   ########.fr       */
+/*   Updated: 2023/09/12 13:51:30 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"server.hpp"
-\
 std::vector<std::string> Server::parsdata(std::string receiveddata) {
     std::vector<std::string> tokens;
     std::string word;

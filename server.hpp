@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/08 16:01:06 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 13:01:19 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ class Server {
 	public:
 		Server(int serverport, std::string pass);
 		~Server();
-		int check_authenticate(int sockfd, std::vector<std::string> tokens);
 		int check_pass(std::vector<std::string> receiveddata, int sockfd);
 		std::vector<std::string> parsdata(std::string receiveddata);
 		void check_reg_and_cmds(std::vector<std::string> receiveddata, int sockfd);
@@ -58,19 +57,40 @@ class Server {
 		void invite(std::vector<std::string> receiveddata, int sockfd);
 		void topic(std::vector<std::string> receiveddata, int sockfd);
 		void mode(std::vector<std::string> receiveddata, int sockfd);
+		void user_registered(int sockfd);
 		void part(std::vector<std::string> receiveddata, int sockfd);
 
-		int is_valide_name(std::string channel_name, int sockfd);
+		int is_valide_name(std::string channel_name);
 		int is_valide_nickname(std::string &nickname, int sockfd);
 		int is_valide_username(std::string nickname);
 		void exec_cmds(std::vector<std::string> receiveddata, int sockfd);
 		int get_sockfd(std::string usernickname);
+		std::map<std::string, std::string> get_channel_and_key(const std::vector<std::string>& receiveddata);
 
+		void TrackTime(const std::string& username);
+		void DisplayTime(const std::string& username, int sockfd);
+	
 	private:
 		std::map<int, Client> usernickMap;
 		std::map<std::string, Channel> channelsMap;
+		std::map<std::string, std::time_t> loginTimes;
 		std::vector<std::string> receiveddata;
 		int serverport;
 		std::string password;
+		struct sockaddr_in6 addr;
+		struct pollfd fds[200];
+		int rc;
+		int on;
+		int listen_sd;
+		int new_sd;
+		int end_server;
+		int compress_array;
+		int close_conn;
+		int timeout;
+		int nfds;
+		int current_size;
+		int j;
+		int i;
+
 };
 #endif

@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/07 15:31:58 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 14:03:17 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,15 +27,6 @@ std::string int_to_string(int nb) {
     return str;
 }
 
-int str_search(std::string str, char c){
-
-    for (size_t i = 0; i < str.length(); i++){
-        if(str[i] == c)
-            return i;
-    }
-    return -1;
-}
-
 int is_num(std::string arg)
 {
     int i = 0;
@@ -48,11 +39,6 @@ int is_num(std::string arg)
     return i;
 }
 
-
-void error(int sockfd, const std::string& message) {
-    send(sockfd, message.c_str(), message.size(), 0);
-}
-
-void success(int sockfd, const std::string& message) {
+void inv_mssg(int sockfd, const std::string& message) {
     send(sockfd, message.c_str(), message.size(), 0);
 }

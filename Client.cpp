@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:44:43 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/05 16:42:07 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 12:08:22 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ Client::Client() {
     this->servername = "";
     this->realname = "";
     this->nickname = "";
+    this->loginTimes = std::time(NULL);
 }
 
 void Client::set_pwdconf(int pwdconf) {
@@ -66,6 +67,10 @@ const int& Client::get_pwdconf(){
 
 const int& Client::get_is_reg(){
     return (this->is_reg);
+}
+
+const std::time_t& Client::get_loginTimesg(){
+    return (this->loginTimes);
 }
 
 int Client::get_is_invited(std::string channel_name){

@@ -6,7 +6,7 @@
 #    By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/09/05 11:18:13 by iellyass         ###   ########.fr        #
+#    Updated: 2023/09/14 13:01:17 by iellyass         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,6 @@ SRCS =	server.cpp\
 		Channel.cpp\
 		Client.cpp\
 		privmsg.cpp\
-		authenticate.cpp\
 		check_pass.cpp\
 		parsdata.cpp\
 		join.cpp\
@@ -32,11 +31,12 @@ SRCS =	server.cpp\
 		nick.cpp\
 		user.cpp\
 		check_reg_and_cmds.cpp\
+		bot.cpp\
 		Tools.cpp
 
 CC =	c++
-# -std=c++98
-CPPFLAGS =	-Wall -Wextra -Werror 
+
+CPPFLAGS =	-Wall -Wextra -Werror -std=c++98
 
 OBJS =	$(SRCS:.cpp=.o)
 

@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 11:11:06 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/07 16:47:44 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/12 13:46:49 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ int Server::is_valide_nickname(std::string &nickname, int sockfd)
 
     if (!isalpha(nickname[0]) && nickname[0] != '_') {
         if(usernickMap[sockfd].get_nickname().empty())
-            error(sockfd, ":irc_server 432 "+ nickname +" :Erroneous Nickname\n");
+            inv_mssg(sockfd, ":irc_server 432 "+ nickname +" :Erroneous Nickname\n");
         else
-            error(sockfd, ":irc_server 432 " + usernickMap[sockfd].get_nickname() + ' ' + nickname + " :Erroneous Nickname\n");
+            inv_mssg(sockfd, ":irc_server 432 " + usernickMap[sockfd].get_nickname() + ' ' + nickname + " :Erroneous Nickname\n");
         return 0;
     }
     while (isalpha(nickname[i]) || nickname[i] == '_' || isdigit(nickname[i])) {
@@ -37,28 +37,28 @@ void Server::nick(std::vector<std::string> receiveddata, int sockfd) {
     std::map<int, Client>::iterator it;
     if (receiveddata.size() < 2){
         if (!usernickMap[sockfd].get_nickname().empty())
-            error(sockfd, ":irc_server 431 " + usernickMap[sockfd].get_nickname() + " :No nickname given\n");
+            inv_mssg(sockfd, ":irc_server 431 " + usernickMap[sockfd].get_nickname() + " :No nickname given\n");
         else
-            error(sockfd, ":irc_server 431  :No nickname given\n");
+            inv_mssg(sockfd, ":irc_server 431  :No nickname given\n");
         return ;
     }
     else{
         for (it = usernickMap.begin(); it != usernickMap.end(); it++){
             if(strtolower(it->second.get_nickname()) == strtolower(receiveddata[1]) && sockfd != get_sockfd(it->second.get_nickname())) {
                 if(usernickMap[sockfd].get_nickname().empty()){
-                    error(sockfd, ":irc_server 433 * " + receiveddata[1] + " :Nickname is already in use.\n");
+                    inv_mssg(sockfd, ":irc_server 433 * " + receiveddata[1] + " :Nickname is already in use.\n");
                     return ;
                 }
                 else if(strtolower(usernickMap[sockfd].get_nickname()) == strtolower(receiveddata[1]))
                     return ;
                 else
-                    error(sockfd, ":irc_server 433 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :Nickname is already in use.\n");
+                    inv_mssg(sockfd, ":irc_server 433 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :Nickname is already in use.\n");
                 return ;
             }
         }
         if (usernickMap[sockfd].get_is_reg() && is_valide_nickname(receiveddata[1], sockfd)) {
             if (usernickMap[sockfd].get_nickname() != receiveddata[1]) {
-                success(sockfd, ':' + usernickMap[sockfd].get_nickname() + "!irc_server NICK :" + receiveddata[1] + '\n');
+                inv_mssg(sockfd, ':' + usernickMap[sockfd].get_nickname() + "!localhost NICK :" + receiveddata[1] + '\n');
                 usernickMap[sockfd].set_nickname(receiveddata[1]);
             }
         }

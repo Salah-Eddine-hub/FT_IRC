@@ -6,20 +6,13 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/09 15:26:58 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 13:07:40 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"server.hpp"
 
-Channel::Channel() {
-    this->is_invite_only = 0;
-    this->is_topic_restricted = 0;
-    this->is_pwd_needed = "";
-    this->limit = 0;
-    this->curr_users = 0;
-    this->is_operator = 0;
-}
+Channel::Channel() {}
 
 Channel::Channel(std::string channel_name) {
     this->original_channel_name = channel_name;
@@ -144,11 +137,10 @@ void Channel::leave_the_channel(int sockfd, std::string nickname, std::string ch
     if(it != membersMap.end()){
         broadcast(':' + nickname + "!irc_server PART " + chnnelname + "\n", -1);
         membersMap.erase(it);
-        // broadcast(nickname + " left the channel: " + get_channel_name() + "\n", sockfd);
         this->dec_current_users();
     }
     else
-        error(sockfd, ":irc_server 442 " + nickname + ' ' + chnnelname + " :You're not on that channel\n");
+        inv_mssg(sockfd, ":irc_server 442 " + nickname + ' ' + chnnelname + " :You're not on that channel\n");
 }
 
 void Channel::remove_the_operator(int sockfd)
@@ -163,9 +155,9 @@ void Channel::remove_the_operator(int sockfd)
 void Channel::broadcast(const std::string& message, int excludingsockfd) {
     for (size_t i = 0; i < this->membersMap.size(); ++i) {
         if(excludingsockfd == -1)
-            success(this->membersMap[i], message);
+            inv_mssg(this->membersMap[i], message);
         else if (this->membersMap[i] != excludingsockfd)
-            success(this->membersMap[i], message);
+            inv_mssg(this->membersMap[i], message);
         }
 }
 
@@ -175,20 +167,19 @@ void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std
     if(it != this->membersMap.end())
         return ;
     else if(this->get_limit() > 0 && (this->get_limit() <= this->get_current_users()))
-        error(sockfd, ":punch.wa.us.dal.net 471 " + usernickMap[sockfd].get_nickname() + this->get_original_channel_name() + " :Cannot join channel (+l)\n");
+        inv_mssg(sockfd, ":punch.wa.us.dal.net 471 " + usernickMap[sockfd].get_nickname() + this->get_original_channel_name() + " :Cannot join channel (+l)\n");
     else{
 
         this->membersMap.push_back(sockfd);
-        std::cout << channel_name << "----------------------------\n";
         std::string users;
         for (size_t i = membersMap.size() - 1;  i > 0; i--)
         {
             users += usernickMap[membersMap[i]].get_nickname() + " ";
         }
         
-        success(sockfd, ':' + nickname + "!localhost JOIN :" + channel_name + "\n");
-        success(sockfd, ":irc_server 353 " + nickname + " = " + this->get_original_channel_name() + " :" + users + '@' + usernickMap[membersMap[0]].get_nickname() + "\n");
-        success(sockfd, ":irc_server 366 " + nickname + ' ' + channel_name + " :End of /NAMES list.\n");
+        inv_mssg(sockfd, ':' + nickname + "!localhost JOIN :" + channel_name + "\n");
+        inv_mssg(sockfd, ":irc_server 353 " + nickname + " = " + this->get_original_channel_name() + " :" + users + '@' + usernickMap[membersMap[0]].get_nickname() + "\n");
+        inv_mssg(sockfd, ":irc_server 366 " + nickname + ' ' + channel_name + " :End of /NAMES list.\n");
         std::string msg = ':' + nickname + "!localhost JOIN :" + channel_name + '\n';
         broadcast(msg, sockfd);
         this->inc_current_users();

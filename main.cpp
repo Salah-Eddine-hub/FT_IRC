@@ -3,27 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 04:01:14 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/21 19:42:33 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/14 13:11:26 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 int main(int ac, char *av[]){
-	int port;
+	std::string port;
 	if (ac != 3){
 		std::cerr << "Wrong num of args" << std::endl;
 		return 0;
 	}
-	port = atoi(av[1]);
-	std::cout << port << std::endl;
-	if(!port){
-		std::cerr << "Error: uncorect port." << std::endl;
+	port = av[1];
+	if(port.find_first_not_of("0123456789") != std::string::npos){
+		std::cerr << "Error: invalid port" << std::endl;
 		return 0;
 	}
-	Server server(port, av[2]);
+	int myport;
+	myport = atoi(port.c_str());
+	std::cout << myport << std::endl;
+	if(!myport || myport > 6669 || myport < 6660){
+		std::cerr << "Error: incorect port." << std::endl;
+		return 0;
+	}
+	Server server(myport, av[2]);
 	return 0;
 }
