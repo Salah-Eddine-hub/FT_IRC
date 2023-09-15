@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Tools.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 14:00:59 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 19:26:10 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 23:40:50 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@ std::string strtolower(std::string str) {
     return str;
 }
 
-int str_search(std::string str, char c){
+std::string int_to_string(int nb) {
+    std::stringstream ss;
+    std::string str;
 
-    for (size_t i = 0; i < str.length(); i++){
-        if(str[i] == c)
-            return i;
-    }
-    return -1;
+    ss << nb;
+    ss >> str;
+    return str;
 }
 
 int is_num(std::string arg)
@@ -39,11 +39,6 @@ int is_num(std::string arg)
     return i;
 }
 
-
-void error(int sockfd, const std::string& message) {
-    send(sockfd, message.c_str(), message.size(), 0);
-}
-
-void success(int sockfd, const std::string& message) {
+void inv_mssg(int sockfd, const std::string& message) {
     send(sockfd, message.c_str(), message.size(), 0);
 }

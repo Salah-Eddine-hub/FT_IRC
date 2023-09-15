@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   topic.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@1337.student.ma>        +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:21:27 by iellyass          #+#    #+#             */
-/*   Updated: 2023/08/30 19:23:34 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 23:40:50 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,31 +15,35 @@
 void Server::topic(std::vector<std::string> receiveddata, int sockfd)
 {
     if (receiveddata.size() >= 3){
+        std::string tmpreceiveddata1 = receiveddata[1] ;
+        receiveddata[1] = strtolower(receiveddata[1]);
         if(channelsMap.find(receiveddata[1]) != channelsMap.end())
         {
             if(!channelsMap[receiveddata[1]].get_is_member(sockfd))
-                error(sockfd, "Error: You are not a member of the channel!\n");
+                inv_mssg(sockfd, ":irc_server 442 " + usernickMap[sockfd].get_nickname() + ' ' + tmpreceiveddata1 + " :You're not on that channel\n");
             else if (!channelsMap[receiveddata[1]].get_is_operator(sockfd) && channelsMap[receiveddata[1]].get_is_topic_restricted())
-                error(sockfd, "Error: Only OPS can change this channel's topic!\n");
+                inv_mssg(sockfd, ":irc_server 482 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :You're not channel operator\n");
             else{
                 channelsMap[receiveddata[1]].set_channel_topic(receiveddata[2]);
-                channelsMap[receiveddata[1]].broadcast(usernickMap[sockfd].get_nickname() + " changed " + receiveddata[1] + " TOPIC to: " + receiveddata[2] + "\n", -1);    
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost TOPIC " + channelsMap[receiveddata[1]].get_original_channel_name() + " :" + receiveddata[2] + "\n", -1);
             }
         }
         else
-            error(sockfd, "Error: Channel not found!\n");
+            inv_mssg(sockfd, ":irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + tmpreceiveddata1 + " :No such channel\n");
     }
     else if (receiveddata.size() == 2)
     {
-        if(channelsMap.find(receiveddata[1]) != channelsMap.end())
+        if(channelsMap.find(strtolower(receiveddata[1])) != channelsMap.end())
         {
             if(channelsMap[receiveddata[1]].get_channel_topic().empty())
-                success(sockfd, "this channel has no topic\n");
+                inv_mssg(sockfd, ":irc_server 331 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :No topic is set.\n");
             else
-                success(sockfd, "channel topic: " + channelsMap[receiveddata[1]].get_channel_topic() + "\n");
+                inv_mssg(sockfd, ":irc_server 332 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + ' ' + channelsMap[strtolower(receiveddata[1])].get_channel_topic() + "\n");
         }
         else
-            error(sockfd, "Error: Channel not found!\n");
+            inv_mssg(sockfd, ":irc_server 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :No such channel\n");
     }
+    else
+        inv_mssg(sockfd, ":irc_server 461 " + usernickMap[sockfd].get_nickname() + " TOPIC :Not enough parameters\n");
     return;
 }

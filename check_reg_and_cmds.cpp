@@ -6,24 +6,20 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:41:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/06 13:45:34 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/15 23:40:50 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"server.hpp"
 #include <ctype.h>
 
-
-int Server::all_cmds(std::vector<std::string> receiveddata, int sockfd) 
+void Server::user_registered(int sockfd)
 {
-    if ((strtolower(receiveddata[0]) == "join" || strtolower(receiveddata[0]) == "nick" || strtolower(receiveddata[0]) == "user"
-        || strtolower(receiveddata[0]) == "privmsg"|| strtolower(receiveddata[0]) == "kick" || strtolower(receiveddata[0]) == "invite"
-             || strtolower(receiveddata[0]) == "topic" || strtolower(receiveddata[0]) == "mode" || strtolower(receiveddata[0]) == "part") 
-                && receiveddata.size() < 2){
-        error(sockfd, "irc_server 461 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :Not enough parameters\n");
-        return 0;
+
+    if (usernickMap[sockfd].get_is_reg() == 0){
+        inv_mssg(sockfd, ":irc_server 001 " + usernickMap[sockfd].get_nickname() + " :Welcome to the IRC Network " + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost\n");
     }
-    return 1;
+    return ;
 }
 
 void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
@@ -36,18 +32,18 @@ void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
             nick(receiveddata, sockfd);
         else {
             if (usernickMap[sockfd].get_nickname().empty())
-                error(sockfd, "irc_server 451 * " + receiveddata[0] + " :You must finish connecting with another nickname first\n");
+                inv_mssg(sockfd, ":irc_server 451 * " + receiveddata[0] + " :You must finish connecting with another nickname first\n");
             else
-                error(sockfd, "irc_server 451 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :You must finish connecting with another nickname first\n");
+                inv_mssg(sockfd, ":irc_server 451 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :You must finish connecting with another nickname first\n");
             return ;
         }
-        std::cout << "usernickMap[sockfd].get_realname()   :" << usernickMap[sockfd].get_realname() << std::endl; 
+    }
+    if (!usernickMap[sockfd].get_nickname().empty() && !usernickMap[sockfd].get_realname().empty() && usernickMap[sockfd].get_is_reg() == 0) {
+        user_registered(sockfd);
+        usernickMap[sockfd].set_is_reg(1);
     }
     else if (!usernickMap[sockfd].get_nickname().empty() && !usernickMap[sockfd].get_realname().empty())
     {
-        // usernickMap[sockfd].set_is_reg(1);
-        // if (!all_cmds(receiveddata, sockfd))
-        //     return ;
         if(strtolower(receiveddata[0]) == "join")
             join(receiveddata, sockfd);
         else if(strtolower(receiveddata[0]) == "nick")
@@ -70,10 +66,11 @@ void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
             part(receiveddata, sockfd);
         else if(strtolower(receiveddata[0]) == "bot")
             DisplayTime(receiveddata[1], sockfd);
+        else if(strtolower(receiveddata[0]) == "pass")
+            inv_mssg(sockfd, ":irc_server 642 " + usernickMap[sockfd].get_nickname() + " :You may not reregister\n");
         else
-            error(sockfd, "irc_server 421 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :Unknown command\n");
+            inv_mssg(sockfd, ":irc_server 421 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :Unknown command\n");
     }
-        std::cout << "usernickMap[sockfd].get_nickname()   :" << usernickMap[sockfd].get_nickname() << std::endl; 
 }
 
 void Server::check_reg_and_cmds(std::vector<std::string> receiveddata, int sockfd) {

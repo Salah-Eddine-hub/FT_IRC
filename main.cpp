@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 04:01:14 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/12 11:55:35 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/15 23:40:50 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,6 @@ int main(int ac, char *av[]){
 		return 0;
 	}
 	port = av[1];
-	// std::cout << av[1]<<std::endl;
-	// if (port[0] == '"' && port[port.length() - 1] == '"') {
-	// 	port = port.substr(1, port.length() - 2);
-	// }
 	if(port.find_first_not_of("0123456789") != std::string::npos){
 		std::cerr << "Error: invalid port" << std::endl;
 		return 0;

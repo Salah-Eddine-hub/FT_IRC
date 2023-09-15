@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/08 11:14:40 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/15 23:40:50 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,18 +34,21 @@
 #include <sstream>
 #include <fcntl.h>
 #include <vector>
-// #include <bits/stdc++.h>
 #include "Channel.hpp"
 #include"Client.hpp"
 #include"Tools.hpp"
 
+
+#include <arpa/inet.h>
+// #include <type.h>
+#include <netdb.h>
+
 class Client;
 
-class Server{
+class Server {
 	public:
 		Server(int serverport, std::string pass);
 		~Server();
-		int check_authenticate(int sockfd, std::vector<std::string> tokens);
 		int check_pass(std::vector<std::string> receiveddata, int sockfd);
 		std::vector<std::string> parsdata(std::string receiveddata);
 		void check_reg_and_cmds(std::vector<std::string> receiveddata, int sockfd);
@@ -59,18 +62,27 @@ class Server{
 		void invite(std::vector<std::string> receiveddata, int sockfd);
 		void topic(std::vector<std::string> receiveddata, int sockfd);
 		void mode(std::vector<std::string> receiveddata, int sockfd);
+		void user_registered(int sockfd);
 		void part(std::vector<std::string> receiveddata, int sockfd);
 
-		int is_valide_name(std::string channel_name, int sockfd);
+		int is_valide_name(std::string channel_name);
 		int is_valide_nickname(std::string &nickname, int sockfd);
+		int is_valide_username(std::string nickname);
 		void exec_cmds(std::vector<std::string> receiveddata, int sockfd);
 		int get_sockfd(std::string usernickname);
-		int all_cmds(std::vector<std::string> receiveddata, int sockfd);
+		std::map<std::string, std::string> get_channel_and_key(const std::vector<std::string>& receiveddata);
 
+		void DisplayTime(const std::string username, int sockfd);
 
-		void TrackTime(const std::string& username);
-		void DisplayTime(const std::string& username, int sockfd);
+		void Initval();
+		void CreateServ();
+		void CheckMsg_isValid_send();
+		bool Poll_addnewclient();
+		
+		bool PasswordCheck(std::string pass);
 
+		std::string ClientIp(int socket);
+	
 	private:
 		std::map<int, Client> usernickMap;
 		std::map<std::string, Channel> channelsMap;
@@ -78,7 +90,7 @@ class Server{
 		std::vector<std::string> receiveddata;
 		int serverport;
 		std::string password;
-		struct sockaddr_in6 addr;
+		struct sockaddr_in addr;
 		struct pollfd fds[200];
 		int rc;
 		int on;

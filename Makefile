@@ -6,7 +6,7 @@
 #    By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/09/12 11:45:46 by sharrach         ###   ########.fr        #
+#    Updated: 2023/09/15 23:40:50 by sharrach         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,6 @@ SRCS =	server.cpp\
 		Channel.cpp\
 		Client.cpp\
 		privmsg.cpp\
-		authenticate.cpp\
 		check_pass.cpp\
 		parsdata.cpp\
 		join.cpp\
@@ -37,7 +36,7 @@ SRCS =	server.cpp\
 
 CC =	c++
 
-CPPFLAGS =	-Wall -Wextra -Werror -std=c++98
+CPPFLAGS =	-Wall -Wextra -Werror -std=c++98 -fsanitize=address
 
 OBJS =	$(SRCS:.cpp=.o)
 
