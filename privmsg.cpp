@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/20 15:57:16 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/12 13:46:49 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 13:47:45 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void Server::privmsg(std::vector<std::string> receiveddata, int sockfd){
     else if (receiveddata[1][0] == '#')
     {
         std::string msg = "";
-        msg = ':' + usernickMap[sockfd].get_nickname() + "!localhost PRIVMSG " + receiveddata[1] + " :" + receiveddata[2] + '\n';
+        msg = ':' + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost PRIVMSG " + receiveddata[1] + " :" + receiveddata[2] + '\n';
         if (channelsMap.find(strtolower(receiveddata[1])) != channelsMap.end())
             channelsMap[strtolower(receiveddata[1])].broadcast(msg , sockfd);
         else        
@@ -32,7 +32,7 @@ void Server::privmsg(std::vector<std::string> receiveddata, int sockfd){
     else if(usernickMap.find(get_sockfd(receiveddata[1])) != usernickMap.end())
     {
         std::string msg;
-        msg = ':' + usernickMap[sockfd].get_nickname() + "!localhost PRIVMSG " + receiveddata[1] + " :" + receiveddata[2] + '\n';
+        msg = ':' + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost PRIVMSG " + receiveddata[1] + " :" + receiveddata[2] + '\n';
         inv_mssg(get_sockfd(receiveddata[1]), msg);
     }
     else        

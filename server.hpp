@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/14 18:06:25 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/15 11:39:49 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ class Server {
 		int get_sockfd(std::string usernickname);
 		std::map<std::string, std::string> get_channel_and_key(const std::vector<std::string>& receiveddata);
 
-		// void TrackTime(const std::string& username);
 		void DisplayTime(const std::string username, int sockfd);
 
 		std::string ClientIp(int client);

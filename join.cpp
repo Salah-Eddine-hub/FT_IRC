@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/14 15:44:42 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/15 14:03:07 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int Server::is_valide_name(std::string channel_name){
 
-    for (size_t i = 1; i < channel_name.size() - 1; i++){
+    for (size_t i = 1; i < channel_name.size(); i++){
         if(channel_name[0] != '#' || (!isalnum(channel_name[i]) && channel_name[i] != '_'))
             return 0;
     }
@@ -29,7 +29,6 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
     }
     if (receiveddata.size() >= 2)
         channelAndkey = get_channel_and_key(receiveddata);
-    
     for (std::map<std::string, std::string>::iterator it = channelAndkey.begin(); it != channelAndkey.end(); it++)
     {
         receiveddata[1] = it->first;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/14 15:53:55 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/15 13:47:45 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,12 +119,15 @@ void Channel::dec_current_users(){
 
 // ---------------------------------------------------------------
 
-void Channel::remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op)
+void Channel::remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op, std::string reason, std::string username)
 {
     std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
     
     if(it != membersMap.end()){
-        broadcast(':' + op + "!localhost KICK " + channel_name + ' ' + nickname + " :" + op + "\n", -1);
+        if (reason.empty())
+            broadcast(':' + op + "!~" + username + "@localhost KICK " + channel_name + ' ' + nickname + " :" + op + "\n", -1);
+        else 
+            broadcast(':' + op + "!~" + username + "@localhost KICK " + channel_name + ' ' + nickname + " :" + reason + "\n", -1);
         membersMap.erase(it);
         this->dec_current_users();
     }
@@ -174,13 +177,16 @@ void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std
         std::string users;
         for (size_t i = membersMap.size() - 1;  i > 0; i--)
         {
-            users += usernickMap[membersMap[i]].get_nickname() + " ";
+            if (this->get_is_operator(membersMap[i]) == 1)
+                users += '@' + usernickMap[membersMap[i]].get_nickname() + " ";
+            else
+                users += usernickMap[membersMap[i]].get_nickname() + " ";
         }
         
-        inv_mssg(sockfd, ':' + nickname + "!localhost JOIN :" + channel_name + "\n");
+        inv_mssg(sockfd, ':' + nickname + "!~" + usernickMap[membersMap[0]].get_username() + "@localhost JOIN :" + channel_name + "\n");
         inv_mssg(sockfd, ":irc_server 353 " + nickname + " = " + this->get_original_channel_name() + " :" + users + '@' + usernickMap[membersMap[0]].get_nickname() + "\n");
         inv_mssg(sockfd, ":irc_server 366 " + nickname + ' ' + channel_name + " :End of /NAMES list.\n");
-        std::string msg = ':' + nickname + "!localhost JOIN :" + channel_name + '\n';
+        std::string msg = ':' + nickname + "!~" + usernickMap[membersMap[0]].get_username() + "@localhost JOIN :" + channel_name + '\n';
         broadcast(msg, sockfd);
         this->inc_current_users();
     }

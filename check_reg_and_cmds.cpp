@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_reg_and_cmds.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:41:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/14 16:00:32 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/15 13:47:59 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void Server::user_registered(int sockfd)
 {
 
     if (usernickMap[sockfd].get_is_reg() == 0){
-        inv_mssg(sockfd, ":irc_server 001 " + usernickMap[sockfd].get_nickname() + " :Welcome to the IRC Network hh!~" + usernickMap[sockfd].get_username() + '@' + "localhost\n");
+        inv_mssg(sockfd, ":irc_server 001 " + usernickMap[sockfd].get_nickname() + " :Welcome to the IRC Network " + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost\n");
     }
     return ;
 }

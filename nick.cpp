@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 11:11:06 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/12 13:46:49 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 13:47:45 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void Server::nick(std::vector<std::string> receiveddata, int sockfd) {
         }
         if (usernickMap[sockfd].get_is_reg() && is_valide_nickname(receiveddata[1], sockfd)) {
             if (usernickMap[sockfd].get_nickname() != receiveddata[1]) {
-                inv_mssg(sockfd, ':' + usernickMap[sockfd].get_nickname() + "!localhost NICK :" + receiveddata[1] + '\n');
+                inv_mssg(sockfd, ':' + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost NICK :" + receiveddata[1] + '\n');
                 usernickMap[sockfd].set_nickname(receiveddata[1]);
             }
         }

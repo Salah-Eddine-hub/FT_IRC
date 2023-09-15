@@ -6,7 +6,7 @@
 /*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:21:27 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/12 13:46:49 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 13:47:45 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void Server::topic(std::vector<std::string> receiveddata, int sockfd)
                 inv_mssg(sockfd, ":irc_server 482 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :You're not channel operator\n");
             else{
                 channelsMap[receiveddata[1]].set_channel_topic(receiveddata[2]);
-                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!localhost TOPIC " + channelsMap[receiveddata[1]].get_original_channel_name() + " :" + receiveddata[2] + "\n", -1);
+                channelsMap[receiveddata[1]].broadcast(':' + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost TOPIC " + channelsMap[receiveddata[1]].get_original_channel_name() + " :" + receiveddata[2] + "\n", -1);
             }
         }
         else
