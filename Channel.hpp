@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/15 13:39:33 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 15:01:25 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Channel
         void broadcast(const std::string& message, int excludingSocket);
 		void remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op, std::string reason, std::string username);
 		void leave_the_channel(int sockfd, std::string nickname, std::string chnnelname);
+		void leave_the_server(int sockfd);
 		void remove_the_operator(int sockfd);
 
         const std::string& get_channel_topic();

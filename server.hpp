@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/15 11:39:49 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 18:54:10 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@
 
 
 #include <arpa/inet.h>
+// #include <type.h>
+#include <netdb.h>
 
 class Client;
 
@@ -72,7 +74,14 @@ class Server {
 
 		void DisplayTime(const std::string username, int sockfd);
 
-		std::string ClientIp(int client);
+		void Initval();
+		void CreateServ();
+		void CheckMsg_isValid_send();
+		bool Poll_addnewclient();
+		
+		bool PasswordCheck(std::string pass);
+
+		std::string ClientIp(int socket);
 	
 	private:
 		std::map<int, Client> usernickMap;

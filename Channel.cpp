@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/15 13:47:45 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/15 15:01:32 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,16 @@ void Channel::leave_the_channel(int sockfd, std::string nickname, std::string ch
     }
     else
         inv_mssg(sockfd, ":irc_server 442 " + nickname + ' ' + chnnelname + " :You're not on that channel\n");
+}
+
+void Channel::leave_the_server(int sockfd)
+{
+    std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
+    
+    if(it != membersMap.end()){
+        membersMap.erase(it);
+        this->dec_current_users();
+    }
 }
 
 void Channel::remove_the_operator(int sockfd)
