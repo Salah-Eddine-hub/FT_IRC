@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:09:18 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/15 19:58:50 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/16 22:38:38 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,22 +30,14 @@ void Server::CreateServ(){
 		exit(-1);
 	}
 
-	rc = setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&on), sizeof(on));
+	rc = setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on));
 	if (rc < 0) {
 		perror("setsockopt() failed");
 		close(listen_sd);
 		exit(-1);
 	}
 
-	int flags = fcntl(listen_sd, F_GETFL, 0);
-	if (flags == -1) {
-		perror("fcntl(F_GETFL) failed");
-		close(listen_sd);
-		exit(-1);
-	}
-
-	flags = O_NONBLOCK;
-	if (fcntl(listen_sd, F_SETFL, flags) == -1) {
+	if (fcntl(listen_sd, F_SETFL, O_NONBLOCK) == -1) {
 		perror("fcntl(F_SETFL) failed");
 		close(listen_sd);
 		exit(-1);
@@ -90,8 +82,8 @@ bool Server::Poll_addnewclient(){
 		return 1;
 }
 
-void Server::CheckMsg_isValid_send(){
-	std::string holder;
+void Server::CheckMsg_isValid_send(std::string holder){
+	
 	if (fds[i].revents & POLLIN) {
 		int found_delimiter = 0;
 
@@ -100,9 +92,11 @@ void Server::CheckMsg_isValid_send(){
 			bzero(recv_buffer, sizeof(recv_buffer));
 			rc = recv(fds[i].fd, recv_buffer, sizeof(recv_buffer), 0);
 			if (rc == -1) {
-					perror("recv() failed");
+				if (errno != EWOULDBLOCK) {
 					close_conn = 1;
-				break;
+					break;
+				}
+				continue;
 			} 
 			else if (rc == 0) {
 				std::cout << "Connection closed" << std::endl;
@@ -111,8 +105,11 @@ void Server::CheckMsg_isValid_send(){
 			} 
 			else {
 				recv_buffer[rc] = '\0';
+				// std::cout << "rec: " << recv_buffer << std::endl;
+				
 				holder.append(recv_buffer, rc);
-
+				bzero(recv_buffer, sizeof(recv_buffer));
+				usernickMap[fds[i].fd].set_holder(holder);
 				size_t pos = std::string::npos;
 				if (holder.find("\r\n") != std::string::npos) {
 					pos = holder.find("\r\n");
@@ -123,26 +120,19 @@ void Server::CheckMsg_isValid_send(){
 				if (pos != std::string::npos) {
 					found_delimiter = 1;
 					std::string data = holder.substr(0, pos);
+					// std::cout << "holder:: " << holder << std::endl;
+					usernickMap[fds[i].fd].set_holder("");
 					this->receiveddata = parsdata(data);
 					if (this->receiveddata.empty())
 						std::cout << "wrong args\n";
 					else
 						check_reg_and_cmds(this->receiveddata, fds[i].fd);
 				}
+				break;
 			}
 		}
 	}
-	if (fds[i].revents & POLLOUT) {
-		rc = send(fds[i].fd, holder.c_str(), holder.size(), 0);
-		if (rc < 0) {
-			perror("send() failed");
-			close_conn = 1;
-		}
-	}
 }
-
-
-
 
 
 Server::Server(int serverport, std::string password) {
@@ -157,7 +147,7 @@ Server::Server(int serverport, std::string password) {
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(serverport);
-	rc = bind(listen_sd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
+	rc = bind(listen_sd, (struct sockaddr *)(&addr), sizeof(addr));
 	if (rc < 0) {
 		perror("bind() failed");
 		close(listen_sd);
@@ -193,7 +183,7 @@ Server::Server(int serverport, std::string password) {
 			} 
 			else {
 				close_conn = 0;
-				CheckMsg_isValid_send();
+				CheckMsg_isValid_send(usernickMap[fds[i].fd].get_holder());
 
 				if (close_conn) {
 					for (std::map<std::string, Channel>::iterator it = channelsMap.begin(); it != channelsMap.end();)
@@ -201,6 +191,7 @@ Server::Server(int serverport, std::string password) {
 						std::string channel_name = it->first;
 						if (channelsMap[channel_name].get_is_member(fds[i].fd)){
 							channelsMap[channel_name].leave_the_server(fds[i].fd);
+							channelsMap[channel_name].broadcast(':' + usernickMap[fds[i].fd].get_nickname() + "!~" + usernickMap[fds[i].fd].get_username() + "@lcoalhost QUIT :Quit :Client closed connection", -1);
 						}
 						if (channelsMap[channel_name].get_current_users() == 0){
 							it = channelsMap.erase(it);
@@ -243,24 +234,59 @@ bool Server::PasswordCheck(std::string pass){
 	return 1;
 }
 
-std::string Server::ClientIp(int socket) {
-	char buffer[INET_ADDRSTRLEN];
-	struct sockaddr_in clientAddress;
-	socklen_t addrLen = sizeof(clientAddress);
 
-	if (socket >= 0 && getpeername(socket, (struct sockaddr*)&clientAddress, &addrLen) == 0) {
-		if (inet_ntop(AF_INET, &clientAddress.sin_addr, buffer, INET_ADDRSTRLEN)) {
-			return buffer;
-		} else {
-			perror("inet_ntop() failed");
-			return "NULL";
-		}
-	} else {
-		perror("getpeername() failed");
-		return "NULL";
-	}
-	return "NULL";
+std::string   Server::ClientIp(int client_fd) {
+    struct sockaddr_in client_addr;
+    socklen_t addr_len = sizeof(client_addr);
+	char hostname[512];
+
+    if (getpeername(client_fd, (struct sockaddr*)&client_addr, &addr_len) == 0) {
+        int result = getnameinfo((struct sockaddr*)&client_addr, addr_len, hostname, sizeof(hostname), NULL, 0, 0);
+        if (result != 0) {
+            fprintf(stderr, "getnameinfo: %s\n", gai_strerror(result));
+			return "";
+        }
+		return hostname;
+    } else {
+        perror("getpeername");
+    }
+	return "";
 }
+
+// std::string Server::getHostAdresse(){
+//     std::system( "ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log" );
+// 	std::stringstream ss;
+// 	ss << std::ifstream( ".log" ).rdbuf();
+// 	std::system( "rm -f .log" );
+// 	return (ss.str().substr( 0, ss.str().find( '\n' ) ));
+// }
+
+// std::string Server::ClientIp(int socket) {
+// 	char buffer[INET_ADDRSTRLEN];
+// 	struct sockaddr_in clientAddress;
+// 	socklen_t addrLen = sizeof(clientAddress);
+
+// 	// std::string localhostcheck(inet_ntoa(clientAddress.sin_addr));
+// 	// if (localhostcheck == "127.0.0.1")
+// 	// 	localhostcheck = getHostAdresse();
+// 	// return localhostcheck;
+
+// 	if (socket >= 0 && getpeername(socket, (struct sockaddr*)&clientAddress, &addrLen) == 0) {
+// 		if (inet_ntop(AF_INET, &clientAddress.sin_addr, buffer, INET_ADDRSTRLEN)) {
+// 			std::string localhostcheck(buffer);
+// 			if (localhostcheck == "127.0.0.1")
+// 				localhostcheck = getHostAdresse();
+// 			return buffer;
+// 		} else {
+// 			perror("inet_ntop() failed");
+// 			return "NULL";
+// 		}
+// 	} else {
+// 		perror("getpeername() failed");
+// 		return "NULL";
+// 	}
+// 	return "NULL";
+// }
 
 int Server::get_sockfd(std::string usernickname){
 	std::map<int, Client>::iterator it;

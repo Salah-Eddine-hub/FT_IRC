@@ -6,7 +6,7 @@
 #    By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/09/14 18:04:54 by sharrach         ###   ########.fr        #
+#    Updated: 2023/09/16 21:04:37 by sharrach         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ SRCS =	server.cpp\
 		user.cpp\
 		check_reg_and_cmds.cpp\
 		bot.cpp\
+		quit.cpp\
 		Tools.cpp
 
 CC =	c++

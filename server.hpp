@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/15 18:54:10 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/16 22:28:08 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@
 #include <fcntl.h>
 #include <vector>
 #include "Channel.hpp"
-#include"Client.hpp"
-#include"Tools.hpp"
+#include "Client.hpp"
+#include "Tools.hpp"
 
 
 #include <arpa/inet.h>
@@ -57,6 +57,7 @@ class Server {
 		void nick(std::vector<std::string> receiveddata, int sockfd);
 		void join(std::vector<std::string> receiveddata, int sockfd);
 		void list(std::vector<std::string> receiveddata, int sockfd);
+		void quit(int sockfd);
 		void privmsg(std::vector<std::string> receiveddata, int sockfd);
 		void kick(std::vector<std::string> receiveddata, int sockfd);
 		void invite(std::vector<std::string> receiveddata, int sockfd);
@@ -76,12 +77,16 @@ class Server {
 
 		void Initval();
 		void CreateServ();
-		void CheckMsg_isValid_send();
+		void CheckMsg_isValid_send(std::string holder);
 		bool Poll_addnewclient();
 		
 		bool PasswordCheck(std::string pass);
 
+		// std::string ClientIp(int socket);
+		
 		std::string ClientIp(int socket);
+
+		std::string getHostAdresse();
 	
 	private:
 		std::map<int, Client> usernickMap;

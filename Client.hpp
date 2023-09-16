@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:43:37 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/16 11:01:02 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/16 22:38:57 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 #define CLIENT_HPP
 #include<iostream>
 #include"server.hpp"
+#include"Channel.hpp"
 
 class Server;
+class Channel;
 
 class Client
 {
@@ -31,9 +33,13 @@ class Client
 		std::string realname;
 		std::string nickname;
 		std::time_t loginTimes;
+		std::string holder;
 	public:
 		Client();
 		~Client();
+
+		void set_holder(std::string holder);
+		std::string get_holder();
 
 		
 		void set_pwdconf(int pwdconf );

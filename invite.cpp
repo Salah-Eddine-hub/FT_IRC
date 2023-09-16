@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   invite.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 15:34:15 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/15 13:47:45 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/16 21:49:55 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void Server::invite(std::vector<std::string> receiveddata, int sockfd)
                 inv_mssg(sockfd, ":irc_server 482 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[2]].get_original_channel_name() + " :You're not channel operator\n");
             else {
                 usernickMap[get_sockfd(receiveddata[1])].set_is_invited(receiveddata[2]);
-                inv_mssg(get_sockfd(receiveddata[1]), ":" + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@localhost INVITE " + receiveddata[1] + " :" + receiveddata[2] + "\n");
+                inv_mssg(get_sockfd(receiveddata[1]), ":" + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@" + "localhost" + " INVITE " + receiveddata[1] + " :" + receiveddata[2] + "\n");
                 inv_mssg(sockfd, ":irc_server 341 " + usernickMap[sockfd].get_nickname() + ' ' + usernickMap[get_sockfd(receiveddata[1])].get_nickname() + ' ' + receiveddata[2] + "\n");
                 channelsMap[strtolower(receiveddata[2])].broadcast(":irc_server NOTICE @" + receiveddata[2] + " :" + usernickMap[sockfd].get_nickname() + " invited " + usernickMap[get_sockfd(receiveddata[1])].get_nickname() + " into channel " + receiveddata[2] + " \n", -1);
             }
