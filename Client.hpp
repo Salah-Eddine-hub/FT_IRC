@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:43:37 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/15 19:57:31 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/16 11:01:02 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ class Client
 		std::string realname;
 		std::string nickname;
 		std::time_t loginTimes;
-		char recv_buffer[513];
 	public:
 		Client();
 		~Client();
