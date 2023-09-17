@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:55:14 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/16 22:33:54 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:19:45 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,31 +119,31 @@ void Channel::dec_current_users(){
 
 // ---------------------------------------------------------------
 
-void Channel::remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op, std::string reason, std::string username)
+void Channel::remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op, std::string reason, std::string username, std::string clientip)
 {
 	std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
 	
 	if(it != membersMap.end()){
 		if (reason.empty())
-			broadcast(':' + op + "!~" + username + "@" + ClientIp(sockfd) + " KICK " + channel_name + ' ' + nickname + " :" + op + "\n", -1);
+			broadcast(':' + op + "!~" + username + "@" + clientip + " KICK " + channel_name + ' ' + nickname + " :" + op + "\n", -1);
 		else 
-			broadcast(':' + op + "!~" + username + "@" + "localhost" + " KICK " + channel_name + ' ' + nickname + " :" + reason + "\n", -1);
+			broadcast(':' + op + "!~" + username + "@" + clientip + " KICK " + channel_name + ' ' + nickname + " :" + reason + "\n", -1);
 		membersMap.erase(it);
 		this->dec_current_users();
 	}
 }
 
-void Channel::leave_the_channel(int sockfd, std::string nickname, std::string chnnelname)
+void Channel::leave_the_channel(int sockfd, std::string nickname, std::string chnnelname, std::string username, std::string localhost)
 {
 	std::vector<int>::iterator it = std::find(membersMap.begin(), membersMap.end(), sockfd);
 	
 	if(it != membersMap.end()){
-		broadcast(':' + nickname + "!irc_server PART " + chnnelname + "\n", -1);
+		broadcast(':' + nickname + "!~" + username + '@' + localhost + " PART " + chnnelname + "\n", -1);
 		membersMap.erase(it);
 		this->dec_current_users();
 	}
 	else
-		inv_mssg(sockfd, ":irc_server 442 " + nickname + ' ' + chnnelname + " :You're not on that channel\n");
+		inv_mssg(sockfd, ':' + localhost + " 442 " + nickname + ' ' + chnnelname + " :You're not on that channel\n");
 }
 
 void Channel::leave_the_server(int sockfd)
@@ -174,13 +174,13 @@ void Channel::broadcast(const std::string& message, int excludingsockfd) {
 		}
 }
 
-void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name, std::map<int, Client>& usernickMap){
+void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name, std::map<int, Client>& usernickMap, std::string clientip, std::string localhost){
 
 	std::vector<int>::iterator it = std::find(this->membersMap.begin(), this->membersMap.end(), sockfd);
 	if(it != this->membersMap.end())
 		return ;
 	else if(this->get_limit() > 0 && (this->get_limit() <= this->get_current_users()))
-		inv_mssg(sockfd, ":irc_server 471 " + usernickMap[sockfd].get_nickname() + ' ' + this->get_original_channel_name() + " :Cannot join channel (+l)\n");
+		inv_mssg(sockfd, ':' + localhost + " 471 " + usernickMap[sockfd].get_nickname() + ' ' + this->get_original_channel_name() + " :Cannot join channel (+l)\n");
 	else{
 
 		this->membersMap.push_back(sockfd);
@@ -193,10 +193,10 @@ void Channel::add_member_to_channel(int sockfd, const std::string& nickname, std
 				users += usernickMap[membersMap[i]].get_nickname() + " ";
 		}
 		
-		inv_mssg(sockfd, ':' + nickname + "!~" + usernickMap[membersMap[0]].get_username() + "@" + "localhost" + " JOIN :" + channel_name + "\n");
-		inv_mssg(sockfd, ":irc_server 353 " + nickname + " = " + this->get_original_channel_name() + " :" + users + '@' + usernickMap[membersMap[0]].get_nickname() + "\n");
-		inv_mssg(sockfd, ":irc_server 366 " + nickname + ' ' + channel_name + " :End of /NAMES list.\n");
-		std::string msg = ':' + nickname + "!~" + usernickMap[membersMap[0]].get_username() + "@" + "localhost" +  " JOIN :" + channel_name + '\n';
+		inv_mssg(sockfd, ':' + nickname + "!~" + usernickMap[membersMap[0]].get_username() + "@" + clientip + " JOIN :" + channel_name + "\n");
+		inv_mssg(sockfd, ':' + localhost + " 353 " + nickname + " = " + this->get_original_channel_name() + " :" + users + '@' + usernickMap[membersMap[0]].get_nickname() + "\n");
+		inv_mssg(sockfd, ':' + localhost + " 366 " + nickname + ' ' + channel_name + " :End of /NAMES list.\n");
+		std::string msg = ':' + nickname + "!~" + usernickMap[membersMap[0]].get_username() + "@" + clientip +  " JOIN :" + channel_name + '\n';
 		broadcast(msg, sockfd);
 		this->inc_current_users();
 	}

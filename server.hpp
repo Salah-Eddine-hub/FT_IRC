@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/16 22:28:08 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:54:38 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ class Server {
 		std::string ClientIp(int socket);
 
 		std::string getHostAdresse();
+		std::string localhostcheck();
+
 	
 	private:
 		std::map<int, Client> usernickMap;
@@ -100,6 +102,7 @@ class Server {
 		int rc;
 		int on;
 		int listen_sd;
+		std::string localhost;
 		int new_sd;
 		int end_server;
 		int compress_array;

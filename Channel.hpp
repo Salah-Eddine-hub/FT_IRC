@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
+/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/16 22:40:06 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 11:20:12 by iellyass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,11 @@ class Channel
 		Channel(std::string channel_name);
 		~Channel();
 
-		void add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name, std::map<int, Client>& usernickMap);
+		void add_member_to_channel(int sockfd, const std::string& nickname, std::string channel_name, std::map<int, Client>& usernickMap, std::string clientip, std::string localhost);
 
 		void broadcast(const std::string& message, int excludingSocket);
-		void remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op, std::string reason, std::string username);
-		void leave_the_channel(int sockfd, std::string nickname, std::string chnnelname);
+		void remove_the_user(int sockfd, std::string channel_name, std::string nickname, std::string op, std::string reason, std::string username, std::string clientip);
+		void leave_the_channel(int sockfd, std::string nickname, std::string chnnelname, std::string username, std::string localhost);
 		void leave_the_server(int sockfd);
 		void remove_the_operator(int sockfd);
 
