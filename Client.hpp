@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 19:43:37 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/16 22:38:57 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 13:58:18 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #ifndef CLIENT_HPP
 #define CLIENT_HPP
 #include<iostream>
-#include"server.hpp"
+#include"Server.hpp"
 #include"Channel.hpp"
 
 class Server;

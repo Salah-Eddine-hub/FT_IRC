@@ -6,11 +6,11 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:09:18 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/17 13:14:53 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 14:00:37 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include "Server.hpp"
 
 void Server::Initval(){
 	on = 1;
@@ -18,7 +18,7 @@ void Server::Initval(){
 	new_sd = -1;
 	end_server = 0;
 	compress_array = 0;
-	nfds = 1, 
+	nfds = 1,
 	current_size = 0;
 }
 
@@ -45,96 +45,6 @@ void Server::CreateServ(){
 }
 
 
-bool Server::Poll_addnewclient(){
-	
-		rc = poll(fds, nfds, timeout);
-
-		if (rc < 0) {
-			perror("poll() failed");
-			return 0;
-		}
-
-		if (rc == 0) {
-			std::cout << "poll() timed out. End program." << std::endl;
-			return 0;
-		}
-		else if (fds[0].revents == POLLIN)
-		{
-			// std::cout << "newclient\n";
-			new_sd = accept(listen_sd, NULL, NULL);
-			if (new_sd < 0) {
-				if (errno != EWOULDBLOCK) {
-					perror("accept() failed");
-					end_server = 1;
-				}
-				return 0;
-			}
-			// std::cout << "Socket file descriptor:" << new_sd << std::endl;
-			std::string clientIP = ClientIp(new_sd);
-			std::cout << "New client connected from IP: " << clientIP << std::endl;
-			usernickMap[new_sd] = Client();
-
-			// std::cout << nfds << "\n";
-			fds[nfds].fd = new_sd;
-			fds[nfds].events = POLLIN ;
-			nfds++;
-		}
-		return 1;
-}
-
-void Server::CheckMsg_isValid_send(std::string holder){
-	
-	if (fds[i].revents & POLLIN) {
-		int found_delimiter = 0;
-
-		while (!found_delimiter) {
-			char recv_buffer[513];
-			bzero(recv_buffer, sizeof(recv_buffer));
-			rc = recv(fds[i].fd, recv_buffer, sizeof(recv_buffer), 0);
-			if (rc == -1) {
-				if (errno != EWOULDBLOCK) {
-					close_conn = 1;
-					break;
-				}
-				continue;
-			} 
-			else if (rc == 0) {
-				std::cout << "Connection closed" << std::endl;
-				close_conn = 1;
-				break;
-			} 
-			else {
-				recv_buffer[rc] = '\0';
-				// std::cout << "rec: " << recv_buffer << std::endl;
-				
-				holder.append(recv_buffer, rc);
-				bzero(recv_buffer, sizeof(recv_buffer));
-				usernickMap[fds[i].fd].set_holder(holder);
-				size_t pos = std::string::npos;
-				if (holder.find("\r\n") != std::string::npos) {
-					pos = holder.find("\r\n");
-				}
-				else if (holder.find("\n") != std::string::npos) {
-					pos = holder.find("\n");
-				}
-				if (pos != std::string::npos) {
-					found_delimiter = 1;
-					std::string data = holder.substr(0, pos);
-					// std::cout << "holder:: " << holder << std::endl;
-					usernickMap[fds[i].fd].set_holder("");
-					this->receiveddata = parsdata(data);
-					if (this->receiveddata.empty())
-						std::cout << "wrong args\n";
-					else
-						check_reg_and_cmds(this->receiveddata, fds[i].fd);
-				}
-				break;
-			}
-		}
-	}
-}
-
-
 Server::Server(int serverport, std::string password) {
 
 	if(PasswordCheck(password) == 0)
@@ -143,7 +53,7 @@ Server::Server(int serverport, std::string password) {
 	this->serverport = serverport;
 	Initval();
 	CreateServ();
-	
+
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(serverport);
@@ -170,13 +80,13 @@ Server::Server(int serverport, std::string password) {
 	{
 		if(Poll_addnewclient() == 0)
 			break;
-		
+
 		current_size = nfds;
 		for (i = 1; i < current_size; i++) {
 			if (fds[i].revents == 0)
 				continue;
 			if (fds[i].fd == listen_sd) {
-			} 
+			}
 			else {
 				close_conn = 0;
 				CheckMsg_isValid_send(usernickMap[fds[i].fd].get_holder());
@@ -195,7 +105,7 @@ Server::Server(int serverport, std::string password) {
 						else
 							++it;
 					}
-					
+
 					usernickMap.erase(fds[i].fd);
 					close(fds[i].fd);
 					compress_array = 1;
@@ -215,14 +125,96 @@ Server::Server(int serverport, std::string password) {
 			}
 		}
 	}
-	// for (i = 0; i < nfds; i++) {
-	// 	if (fds[i].fd >= 0)
-	// 		close(fds[i].fd);
-	// }
 }
 
+
+bool Server::Poll_addnewclient(){
+
+		rc = poll(fds, nfds, timeout);
+
+		if (rc < 0) {
+			perror("poll() failed");
+			return 0;
+		}
+
+		if (rc == 0) {
+			std::cout << "poll() timed out. End program." << std::endl;
+			return 0;
+		}
+		else if (fds[0].revents == POLLIN)
+		{
+			new_sd = accept(listen_sd, NULL, NULL);
+			if (new_sd < 0) {
+				if (errno != EWOULDBLOCK) {
+					perror("accept() failed");
+					end_server = 1;
+				}
+				return 0;
+			}
+			std::string clientIP = ClientIp(new_sd);
+			std::cout << "New client connected from IP: " << clientIP << std::endl;
+			usernickMap[new_sd] = Client();
+
+			fds[nfds].fd = new_sd;
+			fds[nfds].events = POLLIN ;
+			nfds++;
+		}
+		return 1;
+}
+
+void Server::CheckMsg_isValid_send(std::string holder){
+
+	if (fds[i].revents & POLLIN) {
+		int found_delimiter = 0;
+
+		while (!found_delimiter) {
+			char recv_buffer[513];
+			bzero(recv_buffer, sizeof(recv_buffer));
+			rc = recv(fds[i].fd, recv_buffer, sizeof(recv_buffer), 0);
+			if (rc == -1) {
+				if (errno != EWOULDBLOCK) {
+					close_conn = 1;
+					break;
+				}
+				continue;
+			}
+			else if (rc == 0) {
+				std::cout << "Connection closed" << std::endl;
+				close_conn = 1;
+				break;
+			}
+			else {
+				recv_buffer[rc] = '\0';
+
+				holder.append(recv_buffer, rc);
+				bzero(recv_buffer, sizeof(recv_buffer));
+				usernickMap[fds[i].fd].set_holder(holder);
+				size_t pos = std::string::npos;
+				if (holder.find("\r\n") != std::string::npos) {
+					pos = holder.find("\r\n");
+				}
+				else if (holder.find("\n") != std::string::npos) {
+					pos = holder.find("\n");
+				}
+				if (pos != std::string::npos) {
+					found_delimiter = 1;
+					std::string data = holder.substr(0, pos);
+					usernickMap[fds[i].fd].set_holder("");
+					this->receiveddata = parsdata(data);
+					if (this->receiveddata.empty())
+						std::cout << "wrong args\n";
+					else
+						check_reg_and_cmds(this->receiveddata, fds[i].fd);
+				}
+				break;
+			}
+		}
+	}
+}
+
+
 bool Server::PasswordCheck(std::string pass){
-	
+
 	if (pass.empty() || pass.find_first_not_of(' ') == std::string::npos){
 		std::cerr << "No password detected" << std::endl;
 		return 0;
@@ -233,21 +225,21 @@ bool Server::PasswordCheck(std::string pass){
 
 
 std::string Server::getServerIp() {
-    char hostname[256];
-    if (gethostname(hostname, sizeof(hostname)) == 0) {
-        struct hostent* host = gethostbyname(hostname);
-        if (host != NULL) {
-            struct in_addr** addr_list = reinterpret_cast<struct in_addr**>(host->h_addr_list);
-            if (addr_list[0] != NULL) {
-                return inet_ntoa(*addr_list[0]);
-            }
-        }
-    }
-    return NULL;
+	char hostname[256];
+	if (gethostname(hostname, sizeof(hostname)) == 0) {
+		struct hostent* host = gethostbyname(hostname);
+		if (host != NULL) {
+			struct in_addr** addr_list = reinterpret_cast<struct in_addr**>(host->h_addr_list);
+			if (addr_list[0] != NULL) {
+				return inet_ntoa(*addr_list[0]);
+			}
+		}
+	}
+	return NULL;
 }
 
 std::string Server::getHostAdresse(){
-    std::system( "ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log" );
+	std::system( "ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log" );
 	std::stringstream ss;
 	ss << std::ifstream( ".log" ).rdbuf();
 	std::system( "rm -f .log" );
@@ -268,14 +260,14 @@ std::string Server::ClientIp(int socket) {
 		}
 		else {
 			perror("inet_ntop() failed");
-			return "NULL";
+			return NULL;
 		}
-	} 
+	}
 	else {
 		perror("getpeername() failed");
-		return "NULL";
+		return NULL;
 	}
-	return "NULL";
+	return NULL;
 }
 
 int Server::get_sockfd(std::string usernickname){

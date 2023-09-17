@@ -6,15 +6,15 @@
 #    By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/03 04:01:21 by sharrach          #+#    #+#              #
-#    Updated: 2023/09/16 21:04:37 by sharrach         ###   ########.fr        #
+#    Updated: 2023/09/17 14:02:03 by sharrach         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = ircserv
 
-HEADER =	server.hpp Channel.hpp Tools.hpp
+HEADER =	Server.hpp Channel.hpp Tools.hpp
 
-SRCS =	server.cpp\
+SRCS =	Server.cpp\
 		Channel.cpp\
 		Client.cpp\
 		privmsg.cpp\
@@ -37,7 +37,7 @@ SRCS =	server.cpp\
 
 CC =	c++
 
-CPPFLAGS =	-Wall -Wextra -Werror -std=c++98 -fsanitize=address
+CPPFLAGS =	-Wall -Wextra -Werror -std=c++98
 
 OBJS =	$(SRCS:.cpp=.o)
 

@@ -3,22 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 13:53:32 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/17 11:20:12 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/17 13:58:18 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 #include <iostream>
-#include "server.hpp"
+#include "Server.hpp"
 #include "Client.hpp"
 
 class Client;
-class Server;
-
 class Channel
 {
 	private:

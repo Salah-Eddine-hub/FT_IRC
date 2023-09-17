@@ -6,11 +6,11 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 04:01:14 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/16 12:01:24 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 13:58:18 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include "Server.hpp"
 
 int main(int ac, char *av[]){
 	std::string port;

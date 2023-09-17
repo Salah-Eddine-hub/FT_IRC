@@ -6,11 +6,11 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:41:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/17 12:57:31 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 13:58:18 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include"server.hpp"
+#include"Server.hpp"
 #include <ctype.h>
 
 void Server::user_registered(int sockfd)

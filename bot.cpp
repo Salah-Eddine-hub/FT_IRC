@@ -6,13 +6,12 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/14 16:01:31 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/14 16:01:47 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 13:58:31 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "server.hpp"
-#include <chrono>
+#include "Server.hpp"
 
 void Server::DisplayTime(const std::string username, int sockfd) {
 	
@@ -23,11 +22,9 @@ void Server::DisplayTime(const std::string username, int sockfd) {
 	}
 	if (usernickMap.find(get_sockfd(strtolower(username))) != usernickMap.end()) {
 		std::time_t loginTime = usernickMap[get_sockfd(strtolower(username))].get_loginTimesg();
-		std::cout << "loginTime time " <<  loginTime  << std::endl;
 		std::time_t currentTime = std::time(NULL);
 		std::time_t duration = currentTime - loginTime;
 		int minutes = static_cast<int>(duration / 60);
-		std::cout << minutes << std::endl;
 		std::stringstream ss;
 		std::string str_min;
 		ss << minutes;
