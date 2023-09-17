@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:33:40 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/17 11:16:19 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/17 12:57:31 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void Server::list(std::vector<std::string> receiveddata, int sockfd) {
     std::string msg;
     std::map<std::string, Channel>::const_iterator it;
 
-    msg = ':' + localhostcheck() + " 321 " + usernickMap[sockfd].get_nickname() + " Channel :Users Name\n";
+    msg = ':' + getServerIp() + " 321 " + usernickMap[sockfd].get_nickname() + " Channel :Users Name\n";
     inv_mssg(sockfd, msg);
     // if (receiveddata.size() >= 2)
     //     channelAndkey = get_channel_and_key(receiveddata);
@@ -31,9 +31,9 @@ void Server::list(std::vector<std::string> receiveddata, int sockfd) {
             if (channelsMap.find(strtolower(receiveddata[1])) != channelsMap.end())
             {
                 if (!channelsMap[strtolower(receiveddata[1])].get_channel_topic().empty())
-                    msg = ':' + localhostcheck() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + ' ' + int_to_string(channelsMap[strtolower(receiveddata[1])].get_current_users()) + " :" + channelsMap[strtolower(receiveddata[1])].get_channel_topic()+ '\n';
+                    msg = ':' + getServerIp() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + ' ' + int_to_string(channelsMap[strtolower(receiveddata[1])].get_current_users()) + " :" + channelsMap[strtolower(receiveddata[1])].get_channel_topic()+ '\n';
                 else 
-                    msg = ':' + localhostcheck() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + ' ' + int_to_string(channelsMap[strtolower(receiveddata[1])].get_current_users()) + " :\n";
+                    msg = ':' + getServerIp() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + ' ' + int_to_string(channelsMap[strtolower(receiveddata[1])].get_current_users()) + " :\n";
                 inv_mssg(sockfd, msg);
             }
         }
@@ -41,12 +41,12 @@ void Server::list(std::vector<std::string> receiveddata, int sockfd) {
     else if (receiveddata.size() == 1){
         for (it = channelsMap.begin(); it != channelsMap.end(); ++it) {
             if (!channelsMap[it->first].get_channel_topic().empty())
-                msg = ':' + localhostcheck() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[it->first].get_original_channel_name() + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :" + channelsMap[it->first].get_channel_topic()+ '\n';
+                msg = ':' + getServerIp() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[it->first].get_original_channel_name() + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :" + channelsMap[it->first].get_channel_topic()+ '\n';
             else 
-                msg = ':' + localhostcheck() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[it->first].get_original_channel_name() + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :\n";
+                msg = ':' + getServerIp() + " 322 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[it->first].get_original_channel_name() + ' ' + int_to_string(channelsMap[it->first].get_current_users()) + " :\n";
             inv_mssg(sockfd, msg);
         }
     }
-    inv_mssg(sockfd, ':' + localhostcheck() + " 323 " + usernickMap[sockfd].get_nickname() + " :End of /LIST\n");
+    inv_mssg(sockfd, ':' + getServerIp() + " 323 " + usernickMap[sockfd].get_nickname() + " :End of /LIST\n");
     return ;
 }

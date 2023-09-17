@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   user.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/05 11:11:49 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/17 11:16:19 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/17 12:57:31 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ int Server::is_valide_username(std::string nickname)
 void Server::user(std::vector<std::string> receiveddata, int sockfd) {
 
     if (receiveddata.size() < 5){
-        inv_mssg(sockfd, ':' + localhostcheck() + " 461 " + usernickMap[sockfd].get_nickname() + " USER :Not enough parameters\n");
+        inv_mssg(sockfd, ':' + getServerIp() + " 461 " + usernickMap[sockfd].get_nickname() + " USER :Not enough parameters\n");
         return ;
     }
     if (usernickMap[sockfd].get_is_reg())
     {
-        inv_mssg(sockfd, ':' + localhostcheck() + " 462 " + usernickMap[sockfd].get_nickname() + " :You may not reregister\n");
+        inv_mssg(sockfd, ':' + getServerIp() + " 462 " + usernickMap[sockfd].get_nickname() + " :You may not reregister\n");
         return ;
     }
     else{

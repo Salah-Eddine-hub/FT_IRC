@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 22:19:10 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/17 11:21:54 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/17 12:57:31 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int Server::is_valide_name(std::string channel_name){
 void Server::join(std::vector<std::string> receiveddata, int sockfd) {
     std::map<std::string, std::string> channelAndkey;
     if (receiveddata.size() < 2){
-        inv_mssg(sockfd, ':' + localhostcheck() + " 461 " + usernickMap[sockfd].get_nickname() + " JOIN :Not enough parameters\n");
+        inv_mssg(sockfd, ':' + getServerIp() + " 461 " + usernickMap[sockfd].get_nickname() + " JOIN :Not enough parameters\n");
         return ;
     }
     if (receiveddata.size() >= 2)
@@ -33,31 +33,31 @@ void Server::join(std::vector<std::string> receiveddata, int sockfd) {
     {
         receiveddata[1] = it->first;
         if (receiveddata[1].size() < 2 || !is_valide_name(receiveddata[1]))
-            inv_mssg(sockfd, ':' + localhostcheck() + " 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :No such channel\n");\
+            inv_mssg(sockfd, ':' + getServerIp() + " 403 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[1] + " :No such channel\n");\
         else if (channelsMap.find(strtolower(receiveddata[1])) != channelsMap.end()) 
         {
             std::string tmpreceiveddata1 = receiveddata[1];
             receiveddata[1] = strtolower(receiveddata[1]);
             if (!channelsMap[receiveddata[1]].get_is_member(sockfd) && channelsMap[receiveddata[1]].get_is_invite_only() && !usernickMap[sockfd].get_is_invited(receiveddata[1]))
-                inv_mssg(sockfd, ':' + localhostcheck() + " 473 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :Cannot join channel (+i)\n");
+                inv_mssg(sockfd, ':' + getServerIp() + " 473 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :Cannot join channel (+i)\n");
             else if (!channelsMap[receiveddata[1]].get_is_pwd_needed().empty()) 
             {
                 if (receiveddata.size() < 3){
-                    inv_mssg(sockfd, ':' + localhostcheck() + " 475 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :Cannot join channel (+k)\n");
+                    inv_mssg(sockfd, ':' + getServerIp() + " 475 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :Cannot join channel (+k)\n");
                     continue;
                 }
                 std::string pwd = channelAndkey[it->first];
                 if (channelsMap[receiveddata[1]].get_is_pwd_needed() != pwd)
-                    inv_mssg(sockfd, ':' + localhostcheck() + " 475 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :Cannot join channel (+k)\n");
+                    inv_mssg(sockfd, ':' + getServerIp() + " 475 " + usernickMap[sockfd].get_nickname() + ' ' + channelsMap[receiveddata[1]].get_original_channel_name() + " :Cannot join channel (+k)\n");
                 else if (channelsMap[receiveddata[1]].get_is_pwd_needed() == pwd)
-                    channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), tmpreceiveddata1 , usernickMap, ClientIp(sockfd), localhostcheck());
+                    channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), tmpreceiveddata1 , usernickMap, ClientIp(sockfd), getServerIp());
             }
             else
-                channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), tmpreceiveddata1 , usernickMap, ClientIp(sockfd), localhostcheck());
+                channelsMap[receiveddata[1]].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), tmpreceiveddata1 , usernickMap, ClientIp(sockfd), getServerIp());
         }
         else {
             channelsMap[strtolower(receiveddata[1])] = Channel(receiveddata[1]);
-            channelsMap[strtolower(receiveddata[1])].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1], usernickMap, ClientIp(sockfd), localhostcheck());
+            channelsMap[strtolower(receiveddata[1])].add_member_to_channel(sockfd, usernickMap[sockfd].get_nickname(), receiveddata[1], usernickMap, ClientIp(sockfd), getServerIp());
             channelsMap[strtolower(receiveddata[1])].set_is_operator(sockfd);
             channelsMap[strtolower(receiveddata[1])].set_is_pwd_needed(channelAndkey[it->first]);
         }

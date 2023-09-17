@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:38 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/17 13:00:20 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,12 +82,12 @@ class Server {
 		
 		bool PasswordCheck(std::string pass);
 
-		// std::string ClientIp(int socket);
 		
 		std::string ClientIp(int socket);
 
 		std::string getHostAdresse();
-		std::string localhostcheck();
+
+		std::string getServerIp();
 
 	
 	private:

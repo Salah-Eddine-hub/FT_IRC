@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_reg_and_cmds.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:41:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/17 11:16:19 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/17 12:57:31 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void Server::user_registered(int sockfd)
 {
 
 	if (usernickMap[sockfd].get_is_reg() == 0){
-		inv_mssg(sockfd, ':' + localhostcheck() + " 001 " + usernickMap[sockfd].get_nickname() + " :Welcome to the IRC Network " + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@" + ClientIp(sockfd) + "\n");
+		inv_mssg(sockfd, ':' + getServerIp() + " 001 " + usernickMap[sockfd].get_nickname() + " :Welcome to the IRC Network " + usernickMap[sockfd].get_nickname() + "!~" + usernickMap[sockfd].get_username() + "@" + ClientIp(sockfd) + "\n");
 	}
 	return ;
 }
@@ -32,9 +32,9 @@ void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
 			nick(receiveddata, sockfd);
 		else {
 			if (usernickMap[sockfd].get_nickname().empty())
-				inv_mssg(sockfd, ':' + localhostcheck() + " 451 * " + receiveddata[0] + " :You must finish connecting with another nickname first\n");
+				inv_mssg(sockfd, ':' + getServerIp() + " 451 * " + receiveddata[0] + " :You must finish connecting with another nickname first\n");
 			else
-				inv_mssg(sockfd, ':' + localhostcheck() + " 451 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :You must finish connecting with another nickname first\n");
+				inv_mssg(sockfd, ':' + getServerIp() + " 451 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :You must finish connecting with another nickname first\n");
 			return ;
 		}
 	}
@@ -69,9 +69,9 @@ void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
 		else if(strtolower(receiveddata[0]) == "bot")
 			DisplayTime(receiveddata[1], sockfd);
 		else if(strtolower(receiveddata[0]) == "pass")
-			inv_mssg(sockfd, ':' + localhostcheck() + " 642 " + usernickMap[sockfd].get_nickname() + " :You may not reregister\n");
+			inv_mssg(sockfd, ':' + getServerIp() + " 642 " + usernickMap[sockfd].get_nickname() + " :You may not reregister\n");
 		else
-			inv_mssg(sockfd, ':' + localhostcheck() + " 421 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :Unknown command\n");
+			inv_mssg(sockfd, ':' + getServerIp() + " 421 " + usernickMap[sockfd].get_nickname() + ' ' + receiveddata[0] + " :Unknown command\n");
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: iellyass <iellyass@student.42.fr>          +#+  +:+       +#+        */
+/*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/09 13:09:18 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/17 11:54:31 by iellyass         ###   ########.fr       */
+/*   Updated: 2023/09/17 13:14:53 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,12 @@ bool Server::Poll_addnewclient(){
 				}
 				return 0;
 			}
-			std::cout << "Socket file descriptor:" << new_sd << std::endl;
+			// std::cout << "Socket file descriptor:" << new_sd << std::endl;
 			std::string clientIP = ClientIp(new_sd);
 			std::cout << "New client connected from IP: " << clientIP << std::endl;
-			std::cout << "-----------------: " << this->hostyyy << std::endl;
 			usernickMap[new_sd] = Client();
 
-			std::cout << nfds << "\n";
+			// std::cout << nfds << "\n";
 			fds[nfds].fd = new_sd;
 			fds[nfds].events = POLLIN ;
 			nfds++;
@@ -174,12 +173,8 @@ Server::Server(int serverport, std::string password) {
 		
 		current_size = nfds;
 		for (i = 1; i < current_size; i++) {
-			// std::cout << "here2222\n";
-			// sleep(3);
-			// std::cout << "here\n";
 			if (fds[i].revents == 0)
 				continue;
-			// new_sd = accept(listen_sd, NULL, NULL);
 			if (fds[i].fd == listen_sd) {
 			} 
 			else {
@@ -236,23 +231,20 @@ bool Server::PasswordCheck(std::string pass){
 }
 
 
-// std::string   Server::ClientIp(int client_fd) {
-//     struct sockaddr_in client_addr;
-//     socklen_t addr_len = sizeof(client_addr);
-// 	char hostname[512];
 
-//     if (getpeername(client_fd, (struct sockaddr*)&client_addr, &addr_len) == 0) {
-//         int result = getnameinfo((struct sockaddr*)&client_addr, addr_len, hostname, sizeof(hostname), NULL, 0, 0);
-//         if (result != 0) {
-//             fprintf(stderr, "getnameinfo: %s\n", gai_strerror(result));
-// 			return "";
-//         }
-// 		return hostname;
-//     } else {
-//         perror("getpeername");
-//     }
-// 	return "";
-// }
+std::string Server::getServerIp() {
+    char hostname[256];
+    if (gethostname(hostname, sizeof(hostname)) == 0) {
+        struct hostent* host = gethostbyname(hostname);
+        if (host != NULL) {
+            struct in_addr** addr_list = reinterpret_cast<struct in_addr**>(host->h_addr_list);
+            if (addr_list[0] != NULL) {
+                return inet_ntoa(*addr_list[0]);
+            }
+        }
+    }
+    return NULL;
+}
 
 std::string Server::getHostAdresse(){
     std::system( "ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log" );
@@ -266,11 +258,6 @@ std::string Server::ClientIp(int socket) {
 	char buffer[INET_ADDRSTRLEN];
 	struct sockaddr_in clientAddress;
 	socklen_t addrLen = sizeof(clientAddress);
-
-	// std::string localhostcheck(inet_ntoa(clientAddress.sin_addr));
-	// if (localhostcheck == "127.0.0.1")
-	// 	localhostcheck = getHostAdresse();
-	// return localhostcheck;
 
 	if (socket >= 0 && getpeername(socket, (struct sockaddr*)&clientAddress, &addrLen) == 0) {
 		if (inet_ntop(AF_INET, &clientAddress.sin_addr, buffer, INET_ADDRSTRLEN)) {
@@ -291,10 +278,6 @@ std::string Server::ClientIp(int socket) {
 	return "NULL";
 }
 
-
-std::string Server::localhostcheck(){
-	return (this->localhost);
-}
 int Server::get_sockfd(std::string usernickname){
 	std::map<int, Client>::iterator it;
 	for (it = usernickMap.begin(); it != usernickMap.end(); it++){
