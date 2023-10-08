@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/03 14:08:41 by sharrach          #+#    #+#             */
-/*   Updated: 2023/09/17 13:58:35 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 14:50:00 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class Server {
 		int get_sockfd(std::string usernickname);
 		std::map<std::string, std::string> get_channel_and_key(const std::vector<std::string>& receiveddata);
 
-		void DisplayTime(const std::string username, int sockfd);
+		void DisplayTime(std::vector<std::string> receiveddata, int sockfd);
 
 		void Initval();
 		void CreateServ();

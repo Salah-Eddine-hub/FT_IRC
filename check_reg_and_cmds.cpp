@@ -6,7 +6,7 @@
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/17 14:41:36 by iellyass          #+#    #+#             */
-/*   Updated: 2023/09/17 13:58:18 by sharrach         ###   ########.fr       */
+/*   Updated: 2023/09/17 14:49:31 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void Server::exec_cmds(std::vector<std::string> receiveddata, int sockfd){
 		else if(strtolower(receiveddata[0]) == "quit")
 			quit(sockfd);
 		else if(strtolower(receiveddata[0]) == "bot")
-			DisplayTime(receiveddata[1], sockfd);
+			DisplayTime(receiveddata, sockfd);
 		else if(strtolower(receiveddata[0]) == "pass")
 			inv_mssg(sockfd, ':' + getServerIp() + " 642 " + usernickMap[sockfd].get_nickname() + " :You may not reregister\n");
 		else
