@@ -1,297 +1,312 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/03 14:08:22 by sharrach          #+#    #+#             */
-/*   Updated: 2023/08/13 16:17:46 by sharrach         ###   ########.fr       */
+/*   Created: 2023/09/09 13:09:18 by sharrach          #+#    #+#             */
+/*   Updated: 2023/09/17 14:39:30 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "server.hpp"
+#include "Server.hpp"
+
+void Server::Initval(){
+	on = 1;
+	listen_sd = -1;
+	new_sd = -1;
+	end_server = 0;
+	compress_array = 0;
+	nfds = 1,
+	current_size = 0;
+}
 
 
-Server::Server(int serverport, std::string pass): serverport(serverport), pass(pass) {
-    int len, rc, on = 1;
-    int listen_sd = -1, new_sd = -1;
-    int end_server = 0, compress_array = 0;
-    int close_conn;
-    char buffer[80];
-    struct sockaddr_in6 addr;
-    int timeout;
-    struct pollfd fds[200];
-    int nfds = 1, current_size = 0, i, j;
+void Server::CreateServ(){
+	listen_sd = socket(AF_INET, SOCK_STREAM, 0);
+	if (listen_sd < 0) {
+		perror("socket() failed");
+		exit(-1);
+	}
 
-    /*************************************************************/
-    /* Create an AF_INET6 stream socket to receive incoming      */
-    /* connections on                                            */
-    /*************************************************************/
-    listen_sd = socket(AF_INET6, SOCK_STREAM, 0);
-    if (listen_sd < 0) {
-        perror("socket() failed");
-        exit(-1);
-    }
+	rc = setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on));
+	if (rc < 0) {
+		perror("setsockopt() failed");
+		close(listen_sd);
+		exit(-1);
+	}
 
-    /*************************************************************/
-    /* Allow socket descriptor to be reusable                   */
-    /*************************************************************/
-    rc = setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<char *>(&on), sizeof(on));
-    if (rc < 0) {
-        perror("setsockopt() failed");
-        close(listen_sd);
-        exit(-1);
-    }
+	if (fcntl(listen_sd, F_SETFL, O_NONBLOCK) == -1) {
+		perror("fcntl(F_SETFL) failed");
+		close(listen_sd);
+		exit(-1);
+	}
+}
 
-    /*************************************************************/
-    /* Set socket to be nonblocking. All of the sockets for      */
-    /* the incoming connections will also be nonblocking since   */
-    /* they will inherit that state from the listening socket.   */
-    /*************************************************************/
-    rc = ioctl(listen_sd, FIONBIO, reinterpret_cast<char *>(&on));
-    if (rc < 0) {
-        perror("ioctl() failed");
-        close(listen_sd);
-        exit(-1);
-    }
 
-    /*************************************************************/
-    /* Bind the socket                                           */
-    /*************************************************************/
-    memset(&addr, 0, sizeof(addr));
-    addr.sin6_family = AF_INET6;
-    memcpy(&addr.sin6_addr, &in6addr_any, sizeof(in6addr_any));
-    addr.sin6_port = htons(serverport);
-    rc = bind(listen_sd, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr));
-    if (rc < 0) {
-        perror("bind() failed");
-        close(listen_sd);
-        exit(-1);
-    }
+Server::Server(int serverport, std::string password) {
 
-    /*************************************************************/
-    /* Set the listen back log                                   */
-    /*************************************************************/
-    rc = listen(listen_sd, 32);
-    if (rc < 0) {
-        perror("listen() failed");
-        close(listen_sd);
-        exit(-1);
-    }
+	if(PasswordCheck(password) == 0)
+		exit (-1);
+	this->password = password;
+	this->serverport = serverport;
+	Initval();
+	CreateServ();
 
-    /*************************************************************/
-    /* Initialize the pollfd structure                           */
-    /*************************************************************/
-    memset(fds, 0, sizeof(fds));
+	memset(&addr, 0, sizeof(addr));
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(serverport);
+	rc = bind(listen_sd, (struct sockaddr *)(&addr), sizeof(addr));
+	if (rc < 0) {
+		perror("bind() failed");
+		close(listen_sd);
+		exit(-1);
+	}
 
-    /*************************************************************/
-    /* Set up the initial listening socket                        */
-    /*************************************************************/
-    fds[0].fd = listen_sd;
-    fds[0].events = POLLIN;
-    /*************************************************************/
-    /* Initialize the timeout to 3 minutes. If no                */
-    /* activity after 3 minutes this program will end.           */
-    /* timeout value is based on milliseconds.                   */
-    /*************************************************************/
-    timeout = (3 * 60 * 1000);
+	rc = listen(listen_sd, 32);
+	if (rc < 0) {
+		perror("listen() failed");
+		close(listen_sd);
+		exit(-1);
+	}
 
-    /*************************************************************/
-    /* Loop waiting for incoming connects or for incoming data   */
-    /* on any of the connected sockets.                          */
-    /*************************************************************/
-    do {
-        /***********************************************************/
-        /* Call poll() and wait 3 minutes for it to complete.      */
-        /***********************************************************/
-        std::cout << "Waiting on poll()..." << std::endl;
-        rc = poll(fds, nfds, timeout);
+	memset(fds, 0, sizeof(fds));
 
-        /***********************************************************/
-        /* Check to see if the poll call failed.                   */
-        /***********************************************************/
-        if (rc < 0) {
-            perror("poll() failed");
-            break;
-        }
+	fds[0].fd = listen_sd;
+	fds[0].events = POLLIN;
+	timeout = 30000 * 30000;
+	while (end_server == 0)
+	{
+		if(Poll_addnewclient() == 0)
+			break;
 
-        /***********************************************************/
-        /* Check to see if the 3-minute timeout expired.          */
-        /***********************************************************/
-        if (rc == 0) {
-            std::cout << "poll() timed out. End program." << std::endl;
-            break;
-        }
+		current_size = nfds;
+		for (i = 1; i < current_size; i++) {
+			if (fds[i].revents == 0)
+				continue;
+			if (fds[i].fd == listen_sd) {
+			}
+			else {
+				close_conn = 0;
+				CheckMsg_isValid_send(usernickMap[fds[i].fd].get_holder());
 
-        /***********************************************************/
-        /* One or more descriptors are readable. Need to          */
-        /* determine which ones they are.                          */
-        /***********************************************************/
-        current_size = nfds;
-        for (i = 0; i < current_size; i++) {
-            /*********************************************************/
-            /* Loop through to find the descriptors that returned    */
-            /* POLLIN and determine whether it's the listening       */
-            /* or the active connection.                             */
-            /*********************************************************/
-            if (fds[i].revents == 0)
-                continue;
+				if (close_conn) {
+					for (std::map<std::string, Channel>::iterator it = channelsMap.begin(); it != channelsMap.end();)
+					{
+						std::string channel_name = it->first;
+						if (channelsMap[channel_name].get_is_member(fds[i].fd)){
+							channelsMap[channel_name].leave_the_server(fds[i].fd);
+							channelsMap[channel_name].broadcast(':' + usernickMap[fds[i].fd].get_nickname() + "!~" + usernickMap[fds[i].fd].get_username() + "@lcoalhost QUIT :Quit :Client closed connection", -1);
+						}
+						if (channelsMap[channel_name].get_current_users() == 0){
+							it = channelsMap.erase(it);
+						}
+						else
+							++it;
+					}
 
-            /*********************************************************/
-            /* If revents is not POLLIN, it's an unexpected result,  */
-            /* log and end the server.                               */
-            /*********************************************************/
-            if (fds[i].revents != POLLIN) {
-                std::cout << "Error! revents = " << fds[i].revents << std::endl;
-                end_server = 1;
-                break;
-            }
-            if (fds[i].fd == listen_sd) {
-                /*******************************************************/
-                /* Listening descriptor is readable.                   */
-                /*******************************************************/
-                std::cout << "Listening socket is readable" << std::endl;
+					usernickMap.erase(fds[i].fd);
+					close(fds[i].fd);
+					compress_array = 1;
+				}
+			}
+		}
 
-                /*******************************************************/
-                /* Accept all incoming connections that are            */
-                /* queued up on the listening socket before we         */
-                /* loop back and call poll again.                      */
-                /*******************************************************/
-                do {
-                    /*****************************************************/
-                    /* Accept each incoming connection. If               */
-                    /* accept fails with EWOULDBLOCK, then we            */
-                    /* have accepted all of them. Any other              */
-                    /* failure on accept will cause us to end the        */
-                    /* server.                                           */
-                    /*****************************************************/
-                    new_sd = accept(listen_sd, NULL, NULL);
-                    if (new_sd < 0) {
-                        if (errno != EWOULDBLOCK) {
-                            perror("accept() failed");
-                            end_server = 1;
-                        }
-                        break;
-                    }
+		if (compress_array) {
+			compress_array = 0;
+			for (i = 0; i < nfds; i++) {
+				if (fds[i].fd == -1) {
+					for (j = i; j < nfds; j++)
+						fds[j].fd = fds[j + 1].fd;
+					i--;
+					nfds--;
+				}
+			}
+		}
+	}
+}
 
-                    /*****************************************************/
-                    /* Add the new incoming connection to the            */
-                    /* pollfd structure                                  */
-                    /*****************************************************/
-                    std::cout << "New incoming connection - " << new_sd << std::endl;
-                    fds[nfds].fd = new_sd;
-                    fds[nfds].events = POLLIN;
-                    nfds++;
 
-                    /*****************************************************/
-                    /* Loop back up and accept another incoming          */
-                    /* connection                                        */
-                    /*****************************************************/
-                } while (new_sd != -1);
-            }
+bool Server::Poll_addnewclient(){
 
-            /*********************************************************/
-            /* This is not the listening socket, therefore an        */
-            /* existing connection must be readable                  */
-            /*********************************************************/
+		rc = poll(fds, nfds, timeout);
 
-            else {
-                std::cout << "Descriptor " << fds[i].fd << " is readable" << std::endl;
-                close_conn = 0;
-                /*******************************************************/
-                /* Receive all incoming data on this socket            */
-                /* before we loop back and call poll again.            */
-                /*******************************************************/
+		if (rc < 0) {
+			perror("poll() failed");
+			return 0;
+		}
 
-                do {
-                    /*****************************************************/
-                    /* Receive data on this connection until the         */
-                    /* recv fails with EWOULDBLOCK. If any other         */
-                    /* failure occurs, we will close the                 */
-                    /* connection.                                       */
-                    /*****************************************************/
-                    rc = recv(fds[i].fd, buffer, sizeof(buffer), 0);
-                    if (rc < 0) {
-                        if (errno != EWOULDBLOCK) {
-                            perror("recv() failed");
-                            close_conn = 1;
-                        }
-                        break;
-                    }
+		if (rc == 0) {
+			std::cout << "poll() timed out. End program." << std::endl;
+			return 0;
+		}
+		else if (fds[0].revents == POLLIN)
+		{
+			new_sd = accept(listen_sd, NULL, NULL);
+			if (new_sd < 0) {
+				if (errno != EWOULDBLOCK) {
+					perror("accept() failed");
+					end_server = 1;
+				}
+				return 0;
+			}
+			std::string clientIP = ClientIp(new_sd);
+			std::cout << "New client connected from IP: " << clientIP << std::endl;
+			usernickMap[new_sd] = Client();
 
-                    /*****************************************************/
-                    /* Check to see if the connection has been           */
-                    /* closed by the client                              */
-                    /*****************************************************/
-                    if (rc == 0) {
-                        std::cout << "Connection closed" << std::endl;
-                        close_conn = 1;
-                        break;
-                    }
+			fds[nfds].fd = new_sd;
+			fds[nfds].events = POLLIN ;
+			nfds++;
+		}
+		return 1;
+}
 
-                    /*****************************************************/
-                    /* Data was received                                 */
-                    /*****************************************************/
-                    len = rc;
-                    std::cout << len << " bytes received" << std::endl;
+void Server::CheckMsg_isValid_send(std::string holder){
 
-                    /*****************************************************/
-                    /* Echo the data back to the client                  */
-                    /*****************************************************/
-                    rc = send(fds[i].fd, buffer, len, 0);
-                    if (rc < 0) {
-                        perror("send() failed");
-                        close_conn = 1;
-                        break;
-                    }
+	if (fds[i].revents & POLLIN) {
+		int found_delimiter = 0;
 
-                } while (1);
+		while (!found_delimiter) {
+			char recv_buffer[513];
+			bzero(recv_buffer, sizeof(recv_buffer));
+			rc = recv(fds[i].fd, recv_buffer, sizeof(recv_buffer), 0);
+			if (rc == -1) {
+				if (errno != EWOULDBLOCK) {
+					close_conn = 1;
+					break;
+				}
+				continue;
+			}
+			else if (rc == 0) {
+				std::cout << "Connection closed" << std::endl;
+				close_conn = 1;
+				break;
+			}
+			else {
+				recv_buffer[rc] = '\0';
 
-                /*******************************************************/
-                /* If the close_conn flag was turned on, we need       */
-                /* to clean up this active connection. This            */
-                /* clean-up process includes removing the              */
-                /* descriptor.                                         */
-                /*******************************************************/
-                if (close_conn) {
-                    close(fds[i].fd);
-                    fds[i].fd = -1;
-                    compress_array = 1;
-                }
-            } /* End of existing connection is readable */
-        } /* End of loop through pollable descriptors */
+				holder.append(recv_buffer, rc);
+				bzero(recv_buffer, sizeof(recv_buffer));
+				usernickMap[fds[i].fd].set_holder(holder);
+				size_t pos = std::string::npos;
+				if (holder.find("\r\n") != std::string::npos) {
+					pos = holder.find("\r\n");
+				}
+				else if (holder.find("\n") != std::string::npos) {
+					pos = holder.find("\n");
+				}
+				if (pos != std::string::npos) {
+					found_delimiter = 1;
+					std::string data = holder.substr(0, pos);
+					usernickMap[fds[i].fd].set_holder("");
+					this->receiveddata = parsdata(data);
+					if (this->receiveddata.empty())
+						std::cout << "wrong args\n";
+					else
+						check_reg_and_cmds(this->receiveddata, fds[i].fd);
+				}
+				break;
+			}
+		}
+	}
+}
 
-        /***********************************************************/
-        /* If the compress_array flag was turned on, we need       */
-        /* to squeeze together the array and decrement the number  */
-        /* of file descriptors. We do not need to move back the    */
-        /* events and revents fields because the events will always*/
-        /* be POLLIN in this case, and revents is output.          */
-        /***********************************************************/
-        if (compress_array) {
-            compress_array = 0;
-            for (i = 0; i < nfds; i++) {
-                if (fds[i].fd == -1) {
-                    for (j = i; j < nfds; j++) {
-                        fds[j].fd = fds[j + 1].fd;
-                    }
-                    i--;
-                    nfds--;
-                }
-            }
-        }
-    } while (end_server == 0); /* End of serving running. */
 
-    /*************************************************************/
-    /* Clean up all of the sockets that are open                 */
-    /*************************************************************/
-    for (i = 0; i < nfds; i++) {
-        if (fds[i].fd >= 0)
-            close(fds[i].fd);
-    }
+bool Server::PasswordCheck(std::string pass){
+
+	if (pass.empty() || pass.find_first_not_of(' ') == std::string::npos){
+		std::cerr << "No password detected" << std::endl;
+		return 0;
+	}
+	return 1;
+}
+
+
+
+std::string Server::getServerIp() {
+	char hostname[256];
+	if (gethostname(hostname, sizeof(hostname)) == 0) {
+		struct hostent* host = gethostbyname(hostname);
+		if (host != NULL) {
+			struct in_addr** addr_list = reinterpret_cast<struct in_addr**>(host->h_addr_list);
+			if (addr_list[0] != NULL) {
+				return inet_ntoa(*addr_list[0]);
+			}
+		}
+	}
+	return NULL;
+}
+
+std::string Server::getHostAdresse(){
+	std::system( "ifconfig | grep 'inet ' | awk 'NR==2 {print $2}' > .log" );
+	std::stringstream ss;
+	ss << std::ifstream( ".log" ).rdbuf();
+	std::system( "rm -f .log" );
+	return (ss.str().substr( 0, ss.str().find( '\n' ) ));
+}
+
+std::string Server::ClientIp(int socket) {
+	char buffer[INET_ADDRSTRLEN];
+	struct sockaddr_in clientAddress;
+	socklen_t addrLen = sizeof(clientAddress);
+
+	if (socket >= 0 && getpeername(socket, (struct sockaddr*)&clientAddress, &addrLen) == 0) {
+		if (inet_ntop(AF_INET, &clientAddress.sin_addr, buffer, INET_ADDRSTRLEN)) {
+			this->localhost = buffer;
+			if (localhost == "127.0.0.1")
+				this->localhost = getHostAdresse();
+			return localhost;
+		}
+		else {
+			perror("inet_ntop() failed");
+			return NULL;
+		}
+	}
+	else {
+		perror("getpeername() failed");
+		return NULL;
+	}
+	return NULL;
+}
+
+int Server::get_sockfd(std::string usernickname){
+	std::map<int, Client>::iterator it;
+	for (it = usernickMap.begin(); it != usernickMap.end(); it++){
+		if(it->second.get_nickname() == usernickname)
+			return it->first;
+	}
+	return -1;
+}
+
+std::map<std::string, std::string> Server::get_channel_and_key(const std::vector<std::string>& receiveddata) {
+	std::map<std::string, std::string> channelAndkey;
+
+	if (receiveddata.size() == 2) {
+		std::istringstream schannel(receiveddata[1]);
+
+		std::string channel;
+
+		while (std::getline(schannel, channel, ','))
+				channelAndkey[channel] = "";
+	}
+	else if (receiveddata.size() >= 3) {
+		std::istringstream schannel(receiveddata[1]);
+		std::istringstream skey(receiveddata[2]);
+
+		std::string channel;
+		std::string key;
+
+		while (std::getline(schannel, channel, ',')) {
+			if (std::getline(skey, key, ','))
+				channelAndkey[channel] = key;
+			else
+				channelAndkey[channel] = "";
+		}
+	}
+	return channelAndkey;
 }
 
 Server::~Server() {
-    std::cout << "this is destructor for our server" << std::endl;
+	std::cout << "this is destructor for our server" << std::endl;
 }

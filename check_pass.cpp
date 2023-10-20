@@ -1,35 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   check_pass.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sharrach <sharrach@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/03 04:01:14 by sharrach          #+#    #+#             */
+/*   Created: 2023/08/15 17:52:11 by iellyass          #+#    #+#             */
 /*   Updated: 2023/09/17 13:58:18 by sharrach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include"Server.hpp"
 
-int main(int ac, char *av[]){
-	std::string port;
-	if (ac != 3){
-		std::cerr << "Wrong num of args" << std::endl;
-		return 0;
+int Server::check_pass(std::vector<std::string> receiveddata, int sockfd)
+{
+	if(!usernickMap[sockfd].get_pwdconf()){
+		if(strtolower(receiveddata[0]) != "pass")
+			return 0;
+		else {
+			if(receiveddata.size() != 2)
+				return (inv_mssg(sockfd, ':' + getServerIp() + " 461 PASS :Not enough parameters\n")), 0;
+			else {
+				if(receiveddata[1] != this->password)
+					return (inv_mssg(sockfd, ':' + getServerIp() + " 464 * :Password incorrect\n")), 0;
+				else{
+					usernickMap[sockfd].set_pwdconf(1);
+					return 0;
+				}
+			}
+		}
 	}
-	port = av[1];
-	if(port.find_first_not_of("0123456789") != std::string::npos){
-		std::cerr << "Error: invalid port" << std::endl;
-		return 0;
-	}
-	int myport;
-	myport = atoi(port.c_str());
-	std::cout << myport << std::endl;
-	if(!myport || myport > 6669 || myport < 6660){
-		std::cerr << "Error: incorect port." << std::endl;
-		return 0;
-	}
-	Server server(myport, av[2]);
-	return 0;
+	return 1;
 }
